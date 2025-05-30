@@ -13,6 +13,10 @@ with app.app_context():
 def index():
     return render_template('index.html')
 
+@app.route('/usuarios')
+def listar_usuarios():
+    return render_template('usuarios.html')
+
 @app.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()

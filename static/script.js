@@ -7,17 +7,30 @@ function closeModal() {
 }
 
 function saveUser() {
-    const name = document.getElementById('userName').value;
-    const email = document.getElementById('userEmail').value;
+    const name = document.getElementById('userName').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+
+    if (!name || !email) {
+        alert('Preencha nome e email!');
+        return;
+    }
 
     fetch('/api/users', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({name, email})
-    }).then(() => {
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Erro ao salvar usuário');
+        return res.json();
+    })
+    .then(() => {
+        document.getElementById('userName').value = '';
+        document.getElementById('userEmail').value = '';
         closeModal();
         loadUsers();
-    });
+    })
+    .catch(err => alert(err.message));
 }
 
 function loadUsers() {
