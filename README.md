@@ -7,9 +7,9 @@ O ambiente virtual é importante para isolar as dependências do projeto e evita
 `python -m venv venv`
 
 ### ✅ 2. Ativar o ambiente virtual
+`source venv/bin/activate`  (Linux ou MacOS)  
+`venv\Scripts\activate`     (Windows)  
 Depois de ativar, você verá o nome do ambiente (venv) aparecendo no início do terminal.
-`source venv/bin/activate`  # Linux ou MacOS:
-`venv\Scripts\activate`     # Windows
 
 ### ✅ 3. Instalar as dependências
 Com o ambiente virtual ativado, instale todas as bibliotecas necessárias usando:
