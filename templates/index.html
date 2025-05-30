@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Usuários</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Usuários</h1>
+        <button onclick="openModal()">Cadastrar novo usuário</button>
+
+        <input type="text" id="search" placeholder="Buscar usuário...">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- Linhas geradas dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Cadastrar usuário</h2>
+            <input type="text" id="userName" placeholder="Nome do usuário">
+            <input type="email" id="userEmail" placeholder="email_usuario@ifms.edu.br">
+            <button onclick="saveUser()">Salvar alterações</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
