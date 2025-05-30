@@ -7,36 +7,31 @@
 </head>
 <body>
     <div class="container">
-        <h1>Usuários</h1>
-        <button onclick="openModal()">Cadastrar novo usuário</button>
+  <aside class="sidebar">
+    <h2>INSTITUTO FEDERAL<br><small>Mato Grosso do Sul</small></h2>
+    <nav>
+      <a href="/" class="active"s>Visualizar painel</a>
+      <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
+      <a href="#">Gerenciar layout</a>
+      <a href="#">Horários</a>
+      <a href="#">Tela de exibição</a>
+      <a href="#">Histórico</a>
+    </nav>
+  </aside>
 
-        <input type="text" id="search" placeholder="Buscar usuário...">
+  <main class="content">
+    <header class="topbar">
+      <input type="text" placeholder="Buscar usuário" class="search" />
+      <button class="btn" onclick="openModal()">+ Cadastrar novo usuário</button>
+      <div class="profile">
+        <span>Letícia Escobar</span>
+        <a href="#">Sair</a>
+      </div>
+    </header>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>E-mail</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="userTableBody">
-                <!-- Linhas geradas dinamicamente -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Cadastrar usuário</h2>
-            <input type="text" id="userName" placeholder="Nome do usuário">
-            <input type="email" id="userEmail" placeholder="email_usuario@ifms.edu.br">
-            <button onclick="saveUser()">Salvar alterações</button>
-        </div>
-    </div>
+    <h1>Home</h1>
+  </main>
+</div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
