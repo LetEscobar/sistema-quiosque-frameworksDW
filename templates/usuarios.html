@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Gestão de Usuários</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -63,11 +64,17 @@
     <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Cadastrar usuário</h2>
-            <input type="text" id="userName" placeholder="Nome do usuário">
-            <input type="email" id="userEmail" placeholder="email_usuario@ifms.edu.br">
-            <button onclick="saveUser()">Salvar alterações</button>
+            <div class="check">
+              <h2>Cadastrar usuário</h2>
+              <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="login">
+              <label for="name">Nome</label>
+              <input type="text" id="userName" placeholder="Nome do usuário">
+              <label for="email">Email</label>
+              <input type="email" id="userEmail" placeholder="email_usuario@ifms.edu.br">
+              <button onclick="saveUser()" id="save">Salvar alterações</button>
+            </div>
         </div>
     </div>
 

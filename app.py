@@ -33,4 +33,4 @@ def create_user():
     return jsonify({"message": "Usuário criado com sucesso!"}), 201
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=2000)
