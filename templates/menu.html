@@ -1,13 +1,41 @@
 <aside class="sidebar">
     <nav>
-        <a href="{{ url_for('index') }}" class="active"
-            >Gerenciar dispositivos</a
+        <a
+            href="{{ url_for('index') }}"
+            class="{% if request.path == url_for('index') %}active{% endif %}"
         >
-        <a href="{{ url_for('listar_dispositivos') }}">Dispositivos</a>
-        <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
-        <a href="#">Campanhas</a>
-        <a href="#">Conteúdos</a>
-        <a href="#">Horários</a>
-        <a href="#">Histórico</a>
+            <span class="material-icons">dashboard</span>
+            Gerenciar dispositivos
+        </a>
+        <a
+            href="{{ url_for('listar_dispositivos') }}"
+            class="{% if request.path == url_for('listar_dispositivos') %}active{% endif %}"
+        >
+            <span class="material-icons">devices</span>
+            Dispositivos
+        </a>
+        <a
+            href="{{ url_for('listar_usuarios') }}"
+            class="{% if request.path == url_for('listar_usuarios') %}active{% endif %}"
+        >
+            <span class="material-icons">people</span>
+            Usuários
+        </a>
+        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+            <span class="material-icons">campaign</span>
+            Campanhas
+        </a>
+        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+            <span class="material-icons">collections</span>
+            Conteúdos
+        </a>
+        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+            <span class="material-icons">schedule</span>
+            Horários
+        </a>
+        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+            <span class="material-icons">history</span>
+            Histórico
+        </a>
     </nav>
 </aside>
