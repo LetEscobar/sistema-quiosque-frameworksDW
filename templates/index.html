@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Gestão de Usuários</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
     <div class="container">
-  <aside class="sidebar">
-    <h2>INSTITUTO FEDERAL<br><small>Mato Grosso do Sul</small></h2>
-    <nav>
-      <a href="/" class="active"s>Visualizar painel</a>
-      <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
-      <a href="#">Gerenciar layout</a>
-      <a href="#">Horários</a>
-      <a href="#">Tela de exibição</a>
-      <a href="#">Histórico</a>
-    </nav>
-  </aside>
+      <aside class="sidebar">
+        <h2>INSTITUTO FEDERAL<br /><small>Mato Grosso do Sul</small></h2>
+        <nav>
+          <a href="/" class="active">Visualizar painel</a>
+          <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
+          <a href="#">Gerenciar layout</a>
+          <a href="#">Horários</a>
+          <a href="{{ url_for('listar_dispositivos') }}">Tela de exibição</a>
+          <a href="#">Histórico</a>
+        </nav>
+      </aside>
 
-  <main class="content">
-    <header class="topbar">
-      <input type="text" placeholder="Buscar usuário" class="search" />
-      <button class="btn" onclick="openModal()">+ Cadastrar novo usuário</button>
-      <div class="profile">
-        <span>Letícia Escobar</span>
-        <a href="#">Sair</a>
-      </div>
-    </header>
+      <main class="content">
+        <header class="topbar">
+          <input type="text" placeholder="Buscar usuário" class="search" />
+          <button class="btn" onclick="openModal()">
+            + Cadastrar novo usuário
+          </button>
+          <div class="profile">
+            <span>Letícia Escobar</span>
+            <a href="#">Sair</a>
+          </div>
+        </header>
 
-    <h1>Home</h1>
-  </main>
-</div>
+        <h1>Home</h1>
+      </main>
+    </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
+  </body>
 </html>

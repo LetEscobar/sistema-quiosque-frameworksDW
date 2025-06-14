@@ -7,24 +7,23 @@ class User(db.Model):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
     status = db.Column(db.String(10), nullable=False, default='Ativo')
-    senha = db.Column(db.String(100), nullble=False)
+    senha = db.Column(db.String(100), nullable=False)
     logUser = db.relationship('Log', backref=db.backref('user'))
     
 class Tela(db.Model):
     idTela = db.Column(db.Integer, primary_key=True)
-    nomeDispositivo = db.Column(db.String(20),nullable=False)
+    nomeDispositivo = db.Column(db.String(20), nullable=False)
     enderecoIp = db.Column(db.String(15), nullable=False, unique=True)
     status = db.Column(db.String(10), nullable=False, default='Ativo')
-    dimensao = db.Column(db.Integer, nullable=False)
     
 class Conteudo(db.Model):
     idConteudo = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), nullble=False)
-    tipo = db.Column(db.String(50), nullble=False)
-    caminhoArquivo = db.Column(db.String(100), nullble=False)
+    titulo = db.Column(db.String(100), nullable=False)
+    tipo = db.Column(db.String(50), nullable=False)
+    caminhoArquivo = db.Column(db.String(100), nullable=False)
     dataArquivo = db.Column(db.Date, nullable=False)
-    duracao = db.Column(db.Integer, nullble=False)
-    cor = db.Column(db.String(20), nullble=True)
+    duracao = db.Column(db.Integer, nullable=False)
+    cor = db.Column(db.String(20), nullable=True)
 
 class Programacao(db.Model):
     idProgramacao = db.Column(db.Integer, primary_key=True)
