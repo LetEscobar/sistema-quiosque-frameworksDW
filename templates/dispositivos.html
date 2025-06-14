@@ -15,11 +15,11 @@
       <aside class="sidebar">
         <h2>INSTITUTO FEDERAL<br /><small>Mato Grosso do Sul</small></h2>
         <nav>
-          <a href="{{ url_for('index') }}">Visualizar painel</a>
+          <a href="{{ url_for('index') }}" class="active">Visualizar painel</a>
           <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
           <a href="#">Gerenciar layout</a>
           <a href="#">Horários</a>
-          <a href="#" class="active">Tela de exibição</a>
+          <a href="{{ url_for('listar_dispositivos') }}">Tela de exibição</a>
           <a href="#">Histórico</a>
         </nav>
       </aside>
