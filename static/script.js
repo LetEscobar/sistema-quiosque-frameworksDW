@@ -137,8 +137,6 @@ function updateUser() {
         .catch(err => alert(err.message))
 }
 
-// ========== TELAS ==========
-
 function saveTela() {
     const nomeDispositivo = document.getElementById('dispName').value.trim()
     const enderecoIp = document.getElementById('dispIP').value.trim()
@@ -174,30 +172,33 @@ function loadTelas() {
             if (!tbody) return
             tbody.innerHTML = ''
             telas.forEach(tela => {
+                const statusClass =
+                    tela.status.toLowerCase() === 'ativo' ? 'ativo' : 'inativo'
+                const isChecked = tela.status === 'Ativo' ? 'checked' : ''
                 const row = document.createElement('tr')
                 row.innerHTML = `
-                <td>${tela.idTela}</td>
-                <td>${tela.enderecoIp}</td>
-                <td>${tela.nomeDispositivo}</td>
-                <td><span class="status ${tela.status.toLowerCase()}">${
-                    tela.status
-                }</span></td>
-                <td>
-                    <button class="edit">✏️</button>
-                    <label class="switch">
-                        <input type="checkbox" ${
-                            tela.status === 'Ativo' ? 'checked' : ''
-                        } />
-                        <span class="slider"></span>
-                    </label>
-                </td>`
+                    <td>${tela.idTela}</td>
+                    <td>${tela.enderecoIp}</td>
+                    <td>${tela.nomeDispositivo}</td>
+                    <td><span class="status ${statusClass}">${tela.status}</span></td>
+                    <td>
+                        <div class="acoes">
+                            <button class="edit" title="Editar dispositivo" onclick="editTela(${tela.idTela})">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <label class="switch" title="Ativar/Inativar dispositivo">
+                                <input type="checkbox" ${isChecked} onchange="toggleTelaStatus(${tela.idTela}, this.checked)" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </td>
+                `
                 tbody.appendChild(row)
             })
         })
         .catch(err => console.error('Erro ao carregar telas:', err))
 }
 
-// Detectar qual tela carregar com base no ID do elemento
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('userTableBody')) {
         loadUsers()

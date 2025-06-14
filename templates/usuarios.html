@@ -28,28 +28,13 @@ content %}
                 </span>
             </td>
             <td>
-                <div class="acoes">
-                    <button
-                        class="edit"
-                        title="Editar usuário"
-                        onclick="editUser({{ user.id }})"
-                    >
-                        <span class="material-icons">edit</span>
-                    </button>
-                    <label class="switch" title="Ativar/Inativar usuário">
-                        <input
-                            type="checkbox"
-                            {%
-                            if
-                            user.is_active
-                            %}checked{%
-                            endif
-                            %}
-                            onchange="toggleUserStatus({{ user.id }}, this.checked)"
-                        />
-                        <span class="slider"></span>
-                    </label>
-                </div>
+                <button
+                    class="edit"
+                    title="Editar usuário"
+                    onclick="editUser({{ user.id }})"
+                >
+                    <span class="material-icons">edit</span>
+                </button>
             </td>
         </tr>
         {% endfor %}

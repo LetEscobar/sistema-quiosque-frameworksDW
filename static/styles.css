@@ -160,7 +160,11 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+}
+
+.material-icons {
+    font-size: 18px !important;
+    vertical-align: middle;
 }
 
 .switch {
@@ -198,6 +202,12 @@ body {
     background-color: white;
     transition: 0.4s;
     border-radius: 50%;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 input:checked + .slider {
