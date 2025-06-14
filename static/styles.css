@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   color: #333;
 }
 
@@ -74,7 +74,8 @@ body {
   overflow: hidden;
 }
 
-.user-table th, .user-table td {
+.user-table th,
+.user-table td {
   padding: 12px 15px;
   border-bottom: 1px solid #eee;
 }
@@ -123,10 +124,12 @@ body {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 18px;
 }
 
@@ -138,7 +141,7 @@ body {
   left: 2px;
   bottom: 2px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
@@ -154,10 +157,11 @@ input:checked + .slider:before {
   display: none; /* importante */
   position: fixed;
   z-index: 1000;
-  left: 0; top: 0;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
@@ -174,7 +178,7 @@ input:checked + .slider:before {
 .check {
   height: 60px;
   color: #ffffff;
-  background: #2F80ED;
+  background: #2f80ed;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -212,11 +216,40 @@ h2 {
 #save {
   width: 300px;
   height: 30px;
-  background: #27AE60;
+  background: #27ae60;
   color: #ffffff;
   border-radius: 20px;
   border: none;
   padding: 5px;
   text-align: center;
   margin: 0 auto;
+}
+
+/* exibicao quiosque */
+
+.containerQuiosque {
+  padding: 20px;
+}
+
+.barra-horario {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #04542d;
+  height: 80px;
+  width: auto;
+}
+
+.barra-horario img {
+  padding: 10px;
+  height: 60px;
+  object-fit: contain;
+}
+
+#relogio {
+  font-size: 2.5rem;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  letter-spacing: 2px;
 }

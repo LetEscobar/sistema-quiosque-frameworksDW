@@ -100,8 +100,8 @@ function loadTelas() {
                 <td>${tela.enderecoIp}</td>
                 <td>${tela.nomeDispositivo}</td>
                 <td><span class="status ${tela.status.toLowerCase()}">${
-          tela.status
-        }</span></td>
+                  tela.status
+                }</span></td>
                 <td>
                     <button class="edit">✏️</button>
                     <label class="switch">
@@ -125,4 +125,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("telaTableBody")) {
     loadTelas();
   }
+});
+
+// relogio tela de exibição
+
+document.addEventListener("DOMContentLoaded", () => {
+  function atualizarRelogio() {
+    const agora = new Date();
+    const horas = agora.getHours().toString().padStart(2, "0");
+    const minutos = agora.getMinutes().toString().padStart(2, "0");
+    const segundos = agora.getSeconds().toString().padStart(2, "0");
+
+    document.getElementById("relogio").textContent =
+      `${horas}:${minutos}:${segundos}`;
+  }
+
+  setInterval(atualizarRelogio, 1000);
+  atualizarRelogio();
 });

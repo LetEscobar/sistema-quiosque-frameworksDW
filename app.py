@@ -13,6 +13,15 @@ with app.app_context():
 def index():
     return render_template('index.html')
 
+@app.route('/exibicao')
+def exibir_quiosque():
+    imagens = [
+        'slide1.png',
+        'slide2.png',
+        'slide3.png'
+    ]
+    return render_template ('exibicao.html', image = imagens)
+
 @app.route('/usuarios')
 def listar_usuarios():
     return render_template('usuarios.html')
@@ -53,10 +62,6 @@ def create_telas():
         return jsonify({"error": f"Erro ao salvar tela: {str(e)}"}), 500
 
     return jsonify({"message": "Tela criada com sucesso!"}), 201
-
-
-
-
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
