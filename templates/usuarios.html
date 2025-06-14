@@ -1,98 +1,69 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Gestão de Usuários</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-      rel="stylesheet" />
-  </head>
-  <body>
-    <div class="container">
-      <aside class="sidebar">
-        <h2>INSTITUTO FEDERAL<br /><small>Mato Grosso do Sul</small></h2>
-        <nav>
-          <a href="{{ url_for('index') }}">Visualizar painel</a>
-          <a href="#" class="active">Usuários</a>
-          <a href="#">Gerenciar layout</a>
-          <a href="#">Horários</a>
-          <a href="{{ url_for('listar_dispositivos') }}">Tela de exibição</a>
-          <a href="#">Histórico</a>
-        </nav>
-      </aside>
-
-      <main class="content">
-        <header class="topbar">
-          <input type="text" placeholder="Buscar usuário" class="search" />
-          <button class="btn" onclick="openModal()">
-            + Cadastrar novo usuário
-          </button>
-          <div class="profile">
-            <span>Letícia Escobar</span>
-            <a href="#">Sair</a>
-          </div>
-        </header>
-
-        <table class="user-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>E-mail</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody">
-            <tr>
-              <td>124</td>
-              <td>João Silva</td>
-              <td>joao.silva@escola.com</td>
-              <td><span class="status ativo">Ativo</span></td>
-              <td>
-                <button class="edit">✏️</button>
-                <label class="switch">
-                  <input type="checkbox" checked />
-                  <span class="slider"></span>
-                </label>
-              </td>
-            </tr>
-            <!-- Repita outras linhas -->
-          </tbody>
-        </table>
-      </main>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-      <div class="modal-content">
+{% extends 'base.html' %} {% block title %}Usuários{% endblock %} {% block
+content %}
+<div class="search-cta">
+    <input type="text" placeholder="Buscar usuário" class="search" />
+    <button class="btn" onclick="openModal()">Cadastrar novo usuário</button>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="userTableBody">
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+                <span
+                    class="status {{ 'ativo' if user.is_active else 'inativo' }}"
+                >
+                    {{ 'Ativo' if user.is_active else 'Inativo' }}
+                </span>
+            </td>
+            <td>
+                <button
+                    class="edit"
+                    title="Editar usuário"
+                    onclick="editUser({{ user.id }})"
+                >
+                    <span class="material-icons">edit</span>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %} {% block extra_modal %}
+<div id="modal" class="modal">
+    <div class="modal-content">
         <div class="check">
-          <h2>Cadastrar usuário</h2>
-          <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Cadastrar usuário</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
         </div>
         <div class="login">
-          <label for="name">Nome</label>
-          <input type="text" id="userName" placeholder="Nome do usuário" />
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="userEmail"
-            placeholder="email_usuario@ifms.edu.br" /><label for="password"
-            >Senha</label
-          >
-          <input
-            type="password"
-            id="userPassword"
-            placeholder="Senha do usuário" />
-
-          <button onclick="saveUser()" id="save">Salvar alterações</button>
+            <label for="name">Nome</label>
+            <input type="text" id="userName" placeholder="Nome do usuário" />
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="userEmail"
+                placeholder="email_usuario@ifms.edu.br"
+            />
+            <label for="password">Senha</label>
+            <input
+                type="password"
+                id="userPassword"
+                placeholder="Senha do usuário"
+            />
+            <button onclick="saveUser()" id="save">Salvar alterações</button>
         </div>
-      </div>
     </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
-</html>
+</div>
+{% endblock %}

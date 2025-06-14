@@ -30,7 +30,6 @@ def listar_usuarios():
 def listar_dispositivos():
     return render_template('dispositivos.html')
 
-
 @app.route('/api/telas', methods=['GET'])
 def get_telas():
     telas = Tela.query.all()
@@ -41,7 +40,6 @@ def get_telas():
         "status": t.status,
     } for t in telas]
     return jsonify(telas_data)
-
 
 @app.route('/api/telas', methods=['POST'])
 def create_telas():
@@ -57,25 +55,88 @@ def create_telas():
         )
         db.session.add(nova_tela)
         db.session.commit()
+        return jsonify({"message": "Tela criada com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Erro ao salvar tela: {str(e)}"}), 500
 
+<<<<<<< HEAD
     return jsonify({"message": "Tela criada com sucesso!"}), 201
 
+=======
+>>>>>>> origin/main
 @app.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    users_data = [{"id": u.id, "name": u.name, "email": u.email, "status": u.status, "senha": u.senha} for u in users]
+    users_data = [{
+        "id": u.id,
+        "name": u.name,
+        "email": u.email,
+        "status": u.status,
+        "senha": u.senha  # remover depois
+    } for u in users]
     return jsonify(users_data)
+
+@app.route('/api/users/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.get_or_404(id)
+    return jsonify({
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "status": user.status
+    })
 
 @app.route('/api/users', methods=['POST'])
 def create_user():
     data = request.json
-    new_user = User(name=data['name'], email=data['email'], status='Ativo', senha=data['senha'])
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({"message": "Usuário criado com sucesso!"}), 201
+    try:
+        new_user = User(
+            name=data['name'],
+            email=data['email'],
+            senha=data['senha'],
+            status='Ativo'
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "Usuário criado com sucesso!"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erro ao criar usuário: {str(e)}"}), 500
+
+@app.route('/api/users/<int:id>', methods=['PUT'])
+def update_user(id):
+    user = User.query.get_or_404(id)
+    data = request.json
+
+    user.name = data.get('name', user.name)
+    user.email = data.get('email', user.email)
+
+    if 'senha' in data and data['senha'].strip():
+        user.senha = data['senha']
+
+    try:
+        db.session.commit()
+        return jsonify({"message": "Usuário atualizado com sucesso!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erro ao atualizar usuário: {str(e)}"}), 500
+
+@app.route('/api/users/<int:id>/status', methods=['PATCH'])
+def toggle_user_status(id):
+    user = User.query.get_or_404(id)
+    data = request.json
+
+    if 'status' not in data:
+        return jsonify({"error": "Campo 'status' obrigatório"}), 400
+
+    user.status = data['status']
+    try:
+        db.session.commit()
+        return jsonify({"message": f"Status do usuário atualizado para {user.status}!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erro ao atualizar status: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=2000)
