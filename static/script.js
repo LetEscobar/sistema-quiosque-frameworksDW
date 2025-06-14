@@ -165,6 +165,64 @@ function saveTela() {
 }
 
 function loadTelas() {
+<<<<<<< HEAD
+  fetch("/api/telas")
+    .then((res) => res.json())
+    .then((telas) => {
+      const tbody = document.getElementById("telaTableBody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      telas.forEach((tela) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                <td>${tela.idTela}</td>
+                <td>${tela.enderecoIp}</td>
+                <td>${tela.nomeDispositivo}</td>
+                <td><span class="status ${tela.status.toLowerCase()}">${
+                  tela.status
+                }</span></td>
+                <td>
+                    <button class="edit">✏️</button>
+                    <label class="switch">
+                        <input type="checkbox" ${
+                          tela.status === "Ativo" ? "checked" : ""
+                        } />
+                        <span class="slider"></span>
+                    </label>
+                </td>`;
+        tbody.appendChild(row);
+      });
+    })
+    .catch((err) => console.error("Erro ao carregar telas:", err));
+}
+
+// Detectar qual tela carregar com base no ID do elemento
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("userTableBody")) {
+    loadUsers();
+  }
+  if (document.getElementById("telaTableBody")) {
+    loadTelas();
+  }
+});
+
+// relogio tela de exibição
+
+document.addEventListener("DOMContentLoaded", () => {
+  function atualizarRelogio() {
+    const agora = new Date();
+    const horas = agora.getHours().toString().padStart(2, "0");
+    const minutos = agora.getMinutes().toString().padStart(2, "0");
+    const segundos = agora.getSeconds().toString().padStart(2, "0");
+
+    document.getElementById("relogio").textContent =
+      `${horas}:${minutos}:${segundos}`;
+  }
+
+  setInterval(atualizarRelogio, 1000);
+  atualizarRelogio();
+});
+=======
     fetch('/api/telas')
         .then(res => res.json())
         .then(telas => {
@@ -207,3 +265,4 @@ document.addEventListener('DOMContentLoaded', () => {
         loadTelas()
     }
 })
+>>>>>>> origin/main
