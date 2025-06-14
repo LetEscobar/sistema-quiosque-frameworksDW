@@ -1,88 +1,40 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Tela de Exibição</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles.css') }}" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-      rel="stylesheet" />
-  </head>
-  <body>
-    <div class="container">
-      <aside class="sidebar">
-        <h2>INSTITUTO FEDERAL<br /><small>Mato Grosso do Sul</small></h2>
-        <nav>
-          <a href="{{ url_for('index') }}">Visualizar painel</a>
-          <a href="{{ url_for('listar_usuarios') }}">Usuários</a>
-          <a href="#">Gerenciar layout</a>
-          <a href="#">Horários</a>
-          <a href="#" class="active">Tela de exibição</a>
-          <a href="#">Histórico</a>
-        </nav>
-      </aside>
+{% extends 'base.html' %} {% block title %}Dispositivos{% endblock %} {% block
+content %}
+<div class="search-cta">
+    <input type="text" placeholder="Buscar dispositivo" class="search" />
+    <button class="btn" onclick="openModal()">Cadastrar nova tela</button>
+</div>
 
-      <main class="content">
-        <header class="topbar">
-          <input type="text" placeholder="Buscar dispositivo" class="search" />
-          <button class="btn" onclick="openModal()">
-            + Cadastrar nova tela
-          </button>
-          <div class="profile">
-            <span>Letícia Escobar</span>
-            <a href="#">Sair</a>
-          </div>
-        </header>
-
-        <table class="tela-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Endereço IP</th>
-              <th>Nome do dispositivo</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="telaTableBody">
-            <tr>
-              <td>124</td>
-              <td>192.168.1.1</td>
-              <td>TV 1 - Pátio</td>
-              <td><span class="status ativo">Ativo</span></td>
-              <td>
-                <button class="edit">✏️</button>
-                <label class="switch">
-                  <input type="checkbox" checked />
-                  <span class="slider"></span>
-                </label>
-              </td>
-            </tr>
-            <!-- Repita outras linhas -->
-          </tbody>
-        </table>
-      </main>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-      <div class="modal-content">
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Endereço IP</th>
+            <th>Nome do dispositivo</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="telaTableBody"></tbody>
+</table>
+{% endblock %} {% block extra_modal %}
+<div id="modal" class="modal">
+    <div class="modal-content">
         <div class="check">
-          <h2>Cadastrar Tela</h2>
-          <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Cadastrar Tela</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
         </div>
         <div class="login">
-          <label for="name">Nome</label>
-          <input type="text" id="dispName" placeholder="Nome do dispositivo" />
-          <label for="dispIP">IP</label>
-          <input type="text" id="dispIP" placeholder="192.168.1.1" />
-          <button onclick="saveTela()" id="save">Salvar alterações</button>
+            <label for="dispName">Nome</label>
+            <input
+                type="text"
+                id="dispName"
+                placeholder="Nome do dispositivo"
+            />
+            <label for="dispIP">Endereço IP</label>
+            <input type="text" id="dispIP" placeholder="192.168.1.1" />
+            <button onclick="saveTela()" id="save">Salvar alterações</button>
         </div>
-      </div>
     </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
-</html>
+</div>
+{% endblock %}
