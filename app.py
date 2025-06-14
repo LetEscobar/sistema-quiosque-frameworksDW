@@ -60,11 +60,6 @@ def create_telas():
         db.session.rollback()
         return jsonify({"error": f"Erro ao salvar tela: {str(e)}"}), 500
 
-<<<<<<< HEAD
-    return jsonify({"message": "Tela criada com sucesso!"}), 201
-
-=======
->>>>>>> origin/main
 @app.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()
