@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from models import db, User, Tela
+import os, glob
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///painel.db'
@@ -15,12 +16,18 @@ def index():
 
 @app.route('/exibicao')
 def exibir_quiosque():
-    imagens = [
-        'slide1.png',
-        'slide2.png',
-        'slide3.png'
-    ]
-    return render_template ('exibicao.html', image = imagens)
+    img_dir = os.path.join(app.static_folder, "image")
+
+    extensoes = ("*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp")
+
+    imagens = []
+    for ext in extensoes:
+        imagens.extend(
+            os.path.basename(p)
+            for p in glob.glob(os.path.join(img_dir, ext))
+        )
+        
+    return render_template("exibicao.html", imagens=imagens)
 
 @app.route('/usuarios')
 def listar_usuarios():
@@ -60,11 +67,7 @@ def create_telas():
         db.session.rollback()
         return jsonify({"error": f"Erro ao salvar tela: {str(e)}"}), 500
 
-<<<<<<< HEAD
-    return jsonify({"message": "Tela criada com sucesso!"}), 201
 
-=======
->>>>>>> origin/main
 @app.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()

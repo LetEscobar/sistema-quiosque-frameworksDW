@@ -13,33 +13,31 @@
 
   <body>
     <div class="containerQuiosque">
-      <div class="carrossel">
-        <div class="carrossel-images">
-          <img
-            src="{{ url_for('static', filename='image/slide1.png') }}"
-            alt="Slide 1"
-            width="300" />
-          <img
-            src="{{ url_for('static', filename='image/slide2.png') }}"
-            alt="Slide 2"
-            width="300" />
-          <img
-            src="{{ url_for('static', filename='image/slide3.png') }}"
-            alt="Slide 3"
-            width="300" />
+      <div class="fundo-branco">
+        <div class="carrossel">
+          <div class="carrossel-images" id="carrossel">
+            {% for img in imagens %}
+            <img
+              src="{{ url_for('static', filename='image/' + img) }}"
+              alt="Slide {{ loop.index }}"
+              loading="lazy" />
+            {% endfor %}
+          </div>
         </div>
       </div>
 
-      <div class="barra-horario">
-        <img
-          src="{{ url_for('static', filename='image/logo-if.png') }}"
-          alt="logo-ifms" />
+      <div class="fundo-branco-horario">
+        <div class="barra-horario">
+          <img
+            src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
+            alt="logo-ifms" />
 
-        <div id="relogio">00:00:00</div>
+          <div id="relogio">00:00:00</div>
 
-        <img
-          src="{{ url_for('static', filename='image/logo-if.png') }}"
-          alt="logo-ifms" />
+          <img
+            src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
+            alt="logo-ifms" />
+        </div>
       </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
