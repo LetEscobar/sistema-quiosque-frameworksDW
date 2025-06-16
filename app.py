@@ -47,11 +47,11 @@ def login_usuario():
         return redirect(url_for('listar_usuarios'))
 
     print("funcionando!")
-    return render_template('tela-login.html')
-@app.route('/exibicao')
+    return render_template('login.html')
+
+@app.route('/quiosque')
 def exibir_quiosque():
     img_dir = os.path.join(app.static_folder, "image")
-
     extensoes = ("*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp")
 
     imagens = []
@@ -61,7 +61,7 @@ def exibir_quiosque():
             for p in glob.glob(os.path.join(img_dir, ext))
         )
         
-    return render_template("exibicao.html", imagens=imagens)
+    return render_template("quiosque.html", imagens=imagens)
 
 @app.route('/usuarios')
 def listar_usuarios():
@@ -75,9 +75,9 @@ def listar_dispositivos():
 def get_telas():
     telas = Tela.query.all()
     telas_data = [{
-        "idTela": t.idTela,
-        "nomeDispositivo": t.nomeDispositivo,
-        "enderecoIp": t.enderecoIp,
+        "id_tela": t.idTela,
+        "nome_dispositivo": t.nomeDispositivo,
+        "endereco_ip": t.enderecoIp,
         "status": t.status,
     } for t in telas]
     return jsonify(telas_data)
@@ -85,13 +85,13 @@ def get_telas():
 @app.route('/api/telas', methods=['POST'])
 def create_telas():
     data = request.json
-    if not data or not all(k in data for k in ('nomeDispositivo', 'enderecoIp')):
+    if not data or not all(k in data for k in ('nome_dispositivo', 'endereco_ip')):
         return jsonify({"error": "Dados incompletos"}), 400
     
     try:
         nova_tela = Tela(
-            nomeDispositivo=data['nomeDispositivo'],
-            enderecoIp=data['enderecoIp'],
+            nomeDispositivo=data['nome_dispositivo'],
+            enderecoIp=data['endereco_ip'],
             status='Ativo'
         )
         db.session.add(nova_tela)
@@ -114,9 +114,9 @@ def get_users():
     } for u in users]
     return jsonify(users_data)
 
-@app.route('/api/users/<int:id>', methods=['GET'])
-def get_user(id):
-    user = User.query.get_or_404(id)
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
     return jsonify({
         "id": user.id,
         "name": user.name,
@@ -141,9 +141,9 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": f"Erro ao criar usuário: {str(e)}"}), 500
 
-@app.route('/api/users/<int:id>', methods=['PUT'])
-def update_user(id):
-    user = User.query.get_or_404(id)
+@app.route('/api/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
     data = request.json
 
     user.name = data.get('name', user.name)
@@ -159,9 +159,9 @@ def update_user(id):
         db.session.rollback()
         return jsonify({"error": f"Erro ao atualizar usuário: {str(e)}"}), 500
 
-@app.route('/api/users/<int:id>/status', methods=['PATCH'])
-def toggle_user_status(id):
-    user = User.query.get_or_404(id)
+@app.route('/api/users/<int:user_id>/status', methods=['PATCH'])
+def toggle_user_status(user_id):
+    user = User.query.get_or_404(user_id)
     data = request.json
 
     if 'status' not in data:

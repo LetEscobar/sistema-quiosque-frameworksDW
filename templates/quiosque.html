@@ -5,18 +5,17 @@
         <title>Quiosque</title>
         <link
             rel="stylesheet"
-            href="{{ url_for('static', filename='styles.css') }}"
+            href="{{ url_for('static', filename='quiosque.css') }}"
         />
         <link
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
             rel="stylesheet"
         />
     </head>
-
     <body>
-        <div class="containerQuiosque">
+        <div class="container_quiosque">
             <div class="carrossel">
-                <div class="carrossel-images">
+                <div class="carrossel_images">
                     <img
                         src="{{ url_for('static', filename='image/slide1.png') }}"
                         alt="Slide 1"
@@ -35,16 +34,14 @@
                 </div>
             </div>
 
-            <div class="barra-horario">
+            <div class="barra_horario">
                 <img
-                    src="{{ url_for('static', filename='image/logo-if.png') }}"
+                    src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
                     alt="logo-ifms"
                 />
-
                 <div id="relogio"></div>
-
                 <img
-                    src="{{ url_for('static', filename='image/logo-if.png') }}"
+                    src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
                     alt="logo-ifms"
                 />
             </div>

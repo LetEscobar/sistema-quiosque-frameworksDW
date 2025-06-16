@@ -1,279 +1,274 @@
-// MODAL CONTROLS
-function openModal() {
-  document.getElementById("modal").style.display = "block";
+function open_modal() {
+    document.getElementById('modal').style.display = 'block'
 }
 
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
+function close_modal() {
+    document.getElementById('modal').style.display = 'none'
 }
 
-// ========== USUÁRIOS ==========
+function save_user() {
+    const nome = document.getElementById('userName').value.trim()
+    const email = document.getElementById('userEmail').value.trim()
+    const senha = document.getElementById('userPassword').value.trim()
 
-function saveUser() {
-  const name = document.getElementById("userName").value.trim();
-  const email = document.getElementById("userEmail").value.trim();
-  const senha = document.getElementById("userPassword").value.trim();
+    if (!nome || !email || !senha) {
+        alert('Preencha nome, email e senha!')
+        return
+    }
 
-  if (!name || !email || !senha) {
-    alert("Preencha nome, email e senha!");
-    return;
-  }
-
-  fetch("/api/users", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, senha }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Erro ao salvar usuário");
-      return res.json();
+    fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome, email, senha })
     })
-    .then(() => {
-      document.getElementById("userName").value = "";
-      document.getElementById("userEmail").value = "";
-      document.getElementById("userPassword").value = "";
-      closeModal();
-      loadUsers();
-    })
-    .catch((err) => alert(err.message));
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao salvar usuário')
+            return res.json()
+        })
+        .then(() => {
+            document.getElementById('userName').value = ''
+            document.getElementById('userEmail').value = ''
+            document.getElementById('userPassword').value = ''
+            close_modal()
+            load_users()
+        })
+        .catch(err => alert(err.message))
 }
 
-function loadUsers() {
-  fetch("/api/users")
-    .then((res) => res.json())
-    .then((users) => {
-      const tbody = document.getElementById("userTableBody");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-      users.forEach((user) => {
-        const statusClass =
-          user.status.toLowerCase() === "ativo" ? "ativo" : "inativo";
-        const isChecked =
-          user.status.toLowerCase() === "ativo" ? "checked" : "";
-        const row = `<tr>
-                      <td>${user.id}</td>
-                      <td>${user.name}</td>
-                      <td>${user.email}</td>
-                      <td><span class="status ${statusClass}">${user.status}</span></td>
-                      <td>
-                          <button class="edit" title="Editar usuário" onclick="editUser(${user.id})">
-                              <span class="material-icons">edit</span>
-                          </button>
-                          <label class="switch" title="Ativar/Inativar usuário">
-                              <input type="checkbox" ${isChecked} onchange="toggleUserStatus(${user.id}, this.checked)" />
-                              <span class="slider"></span>
-                          </label>
-                      </td>
-                  </tr>`;
-        tbody.innerHTML += row;
-      });
-    });
+function load_users() {
+    fetch('/api/users')
+        .then(res => res.json())
+        .then(users => {
+            const tbody = document.getElementById('userTableBody')
+            if (!tbody) return
+            tbody.innerHTML = ''
+            users.forEach(user => {
+                const status_class =
+                    user.status.toLowerCase() === 'ativo' ? 'ativo' : 'inativo'
+                const is_checked =
+                    user.status.toLowerCase() === 'ativo' ? 'checked' : ''
+                const row = `<tr>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status ${status_class}">${user.status}</span></td>
+                    <td>
+                        <button class="edit" title="Editar usuário" onclick="edit_user(${user.id})">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <label class="switch" title="Ativar/Inativar usuário">
+                            <input type="checkbox" ${is_checked} onchange="toggle_user_status(${user.id}, this.checked)" />
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>`
+                tbody.innerHTML += row
+            })
+        })
 }
 
-let editingUserId = null;
+let editing_user_id = null
 
-function editUser(id) {
-  fetch(`/api/users/${id}`)
-    .then((res) => {
-      if (!res.ok) throw new Error("Usuário não encontrado.");
-      return res.json();
-    })
-    .then((user) => {
-      editingUserId = id;
-      document.getElementById("userName").value = user.name;
-      document.getElementById("userEmail").value = user.email;
-      document.getElementById("userPassword").value = ""; // senha vazia por segurança
-      document.getElementById("save").textContent = "Salvar alterações";
-      document.getElementById("save").onclick = updateUser;
-      openModal();
-    })
-    .catch((err) => alert(err.message));
+function edit_user(id) {
+    fetch(`/api/users/${id}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Usuário não encontrado.')
+            return res.json()
+        })
+        .then(user => {
+            editing_user_id = id
+            document.getElementById('userName').value = user.name
+            document.getElementById('userEmail').value = user.email
+            document.getElementById('userPassword').value = ''
+            document.getElementById('save').textContent = 'Salvar alterações'
+            document.getElementById('save').onclick = update_user
+            open_modal()
+        })
+        .catch(err => alert(err.message))
 }
 
-function toggleUserStatus(id, isActive) {
-  const status = isActive ? "Ativo" : "Inativo";
+function toggle_user_status(id, is_active) {
+    const status = is_active ? 'Ativo' : 'Inativo'
 
-  fetch(`/api/users/${id}/status`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Erro ao atualizar status.");
-      return res.json();
+    fetch(`/api/users/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
     })
-    .then(() => loadUsers())
-    .catch((err) => alert(err.message));
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar status.')
+            return res.json()
+        })
+        .then(() => load_users())
+        .catch(err => alert(err.message))
 }
 
-function updateUser() {
-  const name = document.getElementById("userName").value.trim();
-  const email = document.getElementById("userEmail").value.trim();
-  const senha = document.getElementById("userPassword").value.trim();
+function update_user() {
+    const nome = document.getElementById('userName').value.trim()
+    const email = document.getElementById('userEmail').value.trim()
+    const senha = document.getElementById('userPassword').value.trim()
 
-  if (!name || !email) {
-    alert("Preencha nome e email!");
-    return;
-  }
+    if (!nome || !email) {
+        alert('Preencha nome e email!')
+        return
+    }
 
-  fetch(`/api/users/${editingUserId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, senha }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Erro ao atualizar usuário");
-      return res.json();
+    fetch(`/api/users/${editing_user_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome, email, senha })
     })
-    .then(() => {
-      document.getElementById("userName").value = "";
-      document.getElementById("userEmail").value = "";
-      document.getElementById("userPassword").value = "";
-      document.getElementById("save").textContent = "Salvar alterações";
-      document.getElementById("save").onclick = saveUser;
-      closeModal();
-      loadUsers();
-    })
-    .catch((err) => alert(err.message));
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar usuário')
+            return res.json()
+        })
+        .then(() => {
+            document.getElementById('userName').value = ''
+            document.getElementById('userEmail').value = ''
+            document.getElementById('userPassword').value = ''
+            document.getElementById('save').textContent = 'Salvar usuário'
+            document.getElementById('save').onclick = save_user
+            close_modal()
+            load_users()
+        })
+        .catch(err => alert(err.message))
 }
 
-function saveTela() {
-  const nomeDispositivo = document.getElementById("dispName").value.trim();
-  const enderecoIp = document.getElementById("dispIP").value.trim();
+function save_tela() {
+    const nome_dispositivo = document.getElementById('dispName').value.trim()
+    const endereco_ip = document.getElementById('dispIP').value.trim()
 
-  if (!nomeDispositivo || !enderecoIp) {
-    alert("Preencha todos os campos corretamente!");
-    return;
-  }
+    if (!nome_dispositivo || !endereco_ip) {
+        alert('Preencha todos os campos corretamente!')
+        return
+    }
 
-  fetch("/api/telas", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nomeDispositivo, enderecoIp }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Erro ao salvar tela");
-      return res.json();
+    fetch('/api/telas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nomeDispositivo: nome_dispositivo,
+            enderecoIp: endereco_ip
+        })
     })
-    .then(() => {
-      document.getElementById("dispName").value = "";
-      document.getElementById("dispIP").value = "";
-      closeModal();
-      loadTelas();
-    })
-    .catch((err) => alert(err.message));
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao salvar tela')
+            return res.json()
+        })
+        .then(() => {
+            document.getElementById('dispName').value = ''
+            document.getElementById('dispIP').value = ''
+            close_modal()
+            load_telas()
+        })
+        .catch(err => alert(err.message))
 }
 
-function loadTelas() {
-  fetch("/api/telas")
-    .then((res) => res.json())
-    .then((telas) => {
-      const tbody = document.getElementById("telaTableBody");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-      telas.forEach((tela) => {
-        const statusClass =
-          tela.status.toLowerCase() === "ativo" ? "ativo" : "inativo";
-        const isChecked = tela.status === "Ativo" ? "checked" : "";
-        const row = document.createElement("tr");
-        row.innerHTML = `
+function load_telas() {
+    fetch('/api/telas')
+        .then(res => res.json())
+        .then(telas => {
+            const tbody = document.getElementById('telaTableBody')
+            if (!tbody) return
+            tbody.innerHTML = ''
+            telas.forEach(tela => {
+                const status_class =
+                    tela.status.toLowerCase() === 'ativo' ? 'ativo' : 'inativo'
+                const is_checked = tela.status === 'Ativo' ? 'checked' : ''
+                const row = document.createElement('tr')
+                row.innerHTML = `
                     <td>${tela.idTela}</td>
                     <td>${tela.enderecoIp}</td>
                     <td>${tela.nomeDispositivo}</td>
-                    <td><span class="status ${statusClass}">${tela.status}</span></td>
+                    <td><span class="status ${status_class}">${tela.status}</span></td>
                     <td>
                         <div class="acoes">
-                            <button class="edit" title="Editar dispositivo" onclick="editTela(${tela.idTela})">
+                            <button class="edit" title="Editar dispositivo" onclick="edit_tela(${tela.idTela})">
                                 <span class="material-icons">edit</span>
                             </button>
                             <label class="switch" title="Ativar/Inativar dispositivo">
-                                <input type="checkbox" ${isChecked} onchange="toggleTelaStatus(${tela.idTela}, this.checked)" />
+                                <input type="checkbox" ${is_checked} onchange="toggle_tela_status(${tela.idTela}, this.checked)" />
                                 <span class="slider"></span>
                             </label>
                         </div>
                     </td>
-                `;
-        tbody.appendChild(row);
-      });
-    })
-    .catch((err) => console.error("Erro ao carregar telas:", err));
+                `
+                tbody.appendChild(row)
+            })
+        })
+        .catch(err => console.error('Erro ao carregar telas:', err))
 }
 
-function atualizarRelogio() {
+document.addEventListener('DOMContentLoaded', function () {
+    const carrossel_images = document.querySelector('.carrossel-images')
+    const imagens = document.querySelectorAll('.carrossel-images img')
+    let index = 0
+
+    function mostrar_proxima_imagem() {
+        index = (index + 1) % imagens.length
+        const largura = imagens[0].clientWidth
+        carrossel_images.style.transform = `translateX(-${index * largura}px)`
+    }
+
+    setInterval(mostrar_proxima_imagem, 5000)
+})
+
+function atualizar_relogio() {
     const agora = new Date()
     const horas = agora.getHours().toString().padStart(2, '0')
     const minutos = agora.getMinutes().toString().padStart(2, '0')
     const segundos = agora.getSeconds().toString().padStart(2, '0')
-
-    const horaFormatada = `${horas}:${minutos}:${segundos}`
     const relogio = document.getElementById('relogio')
+
     if (relogio) {
-        relogio.textContent = horaFormatada
+        relogio.textContent = `${horas}:${minutos}:${segundos}`
     }
 }
 
-atualizarRelogio()
-setInterval(atualizarRelogio, 1000)
+setInterval(atualizar_relogio, 1000)
+atualizar_relogio()
 
-function atualizarRelogio() {
-  const agora = new Date();
-  const horas = agora.getHours().toString().padStart(2, "0");
-  const minutos = agora.getMinutes().toString().padStart(2, "0");
-  const segundos = agora.getSeconds().toString().padStart(2, "0");
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('userTableBody')) load_users()
+    if (document.getElementById('telaTableBody')) load_telas()
 
-  const horaFormatada = `${horas}:${minutos}:${segundos}`;
-  const relogio = document.getElementById("relogio");
-  if (relogio) {
-    relogio.textContent = horaFormatada;
-  }
-}
+    const carrossel = document.getElementById('carrossel')
+    if (carrossel) {
+        const slides = Array.from(carrossel.querySelectorAll('img'))
+        const container = carrossel.parentElement
+        const total = slides.length
 
-atualizarRelogio();
-setInterval(atualizarRelogio, 1000);
+        if (total > 0) {
+            const clone = slides[0].cloneNode(true)
+            carrossel.appendChild(clone)
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("userTableBody")) {
-    loadUsers();
-  }
-  if (document.getElementById("telaTableBody")) {
-    loadTelas();
-  }
-});
+            let index = 0
+            let largura = container.offsetWidth
 
-document.addEventListener("DOMContentLoaded", () => {
-  const carrossel = document.getElementById("carrossel");
-  const slides = Array.from(carrossel.querySelectorAll("img"));
-  const container = carrossel.parentElement;
-  const total = slides.length;
+            function atualizar_transform() {
+                carrossel.style.transform = `translateX(${-index * largura}px)`
+            }
 
-  const clone = slides[0].cloneNode(true);
-  carrossel.appendChild(clone);
+            function avancar() {
+                index++
+                carrossel.style.transition = 'transform 0.5s ease-in-out'
+                atualizar_transform()
 
-  let index = 0;
-  let width = container.offsetWidth;
+                if (index === total) {
+                    setTimeout(() => {
+                        carrossel.style.transition = 'none'
+                        index = 0
+                        atualizar_transform()
+                    }, 500)
+                }
+            }
 
-  function atualizarTransform() {
-    carrossel.style.transform = `translateX(${-index * width}px)`;
-  }
+            setInterval(avancar, 5000)
 
-  function avancar() {
-    index++;
-    carrossel.style.transition = "transform 0.5s ease-in-out";
-    atualizarTransform();
-
-    if (index === total) {
-      setTimeout(() => {
-        carrossel.style.transition = "none";
-        index = 0;
-        atualizarTransform();
-      }, 500);
+            window.addEventListener('resize', () => {
+                largura = container.offsetWidth
+                atualizar_transform()
+            })
+        }
     }
-  }
-
-  setInterval(avancar, 5000);
-
-  window.addEventListener("resize", () => {
-    width = container.offsetWidth;
-    atualizarTransform();
-  });
-});
+})
