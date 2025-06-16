@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Quiosque</title>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='styles.css') }}"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+
+    <body>
+        <div class="containerQuiosque">
+            <div class="carrossel">
+                <div class="carrossel-images">
+                    <img
+                        src="{{ url_for('static', filename='image/slide1.png') }}"
+                        alt="Slide 1"
+                        width="300"
+                    />
+                    <img
+                        src="{{ url_for('static', filename='image/slide2.png') }}"
+                        alt="Slide 2"
+                        width="300"
+                    />
+                    <img
+                        src="{{ url_for('static', filename='image/slide3.png') }}"
+                        alt="Slide 3"
+                        width="300"
+                    />
+                </div>
+            </div>
+
+            <div class="barra-horario">
+                <img
+                    src="{{ url_for('static', filename='image/logo-if.png') }}"
+                    alt="logo-ifms"
+                />
+
+                <div id="relogio"></div>
+
+                <img
+                    src="{{ url_for('static', filename='image/logo-if.png') }}"
+                    alt="logo-ifms"
+                />
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
+</html>

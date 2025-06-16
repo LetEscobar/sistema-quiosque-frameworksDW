@@ -1,0 +1,21 @@
+<link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+/>
+
+<header class="topbar">
+    <a href="{{ url_for('index') }}" class="logo-topo">
+        <img
+            src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
+            alt="IFMS Logo"
+            style="height: 24px; vertical-align: middle; margin-right: 8px"
+        />
+    </a>
+    <div class="profile">
+        <span>Nome do usuário</span>
+        <a href="#">
+            <span class="material-icons">logout</span>
+            Sair
+        </a>
+    </div>
+</header>
