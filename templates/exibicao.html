@@ -15,36 +15,37 @@
 
     <body>
         <div class="containerQuiosque">
-            <div class="carrossel">
-                <div class="carrossel-images">
-                    <img
-                        src="{{ url_for('static', filename='image/slide1.png') }}"
-                        alt="Slide 1"
-                        width="300"
-                    />
-                    <img
-                        src="{{ url_for('static', filename='image/slide2.png') }}"
-                        alt="Slide 2"
-                        width="300"
-                    />
-                    <img
-                        src="{{ url_for('static', filename='image/slide3.png') }}"
-                        alt="Slide 3"
-                        width="300"
-                    />
+            <div class="conteudo-principal">
+                <div class="carrossel">
+                    <div class="carrossel-images" id="carrossel">
+                        <img
+                            src="{{ url_for('static', filename='image/slide1.png') }}"
+                            alt="Slide 1"
+                            width="300"
+                        />
+                        <img
+                            src="{{ url_for('static', filename='image/slide2.png') }}"
+                            alt="Slide 2"
+                            width="300"
+                        />
+                        <img
+                            src="{{ url_for('static', filename='image/slide3.png') }}"
+                            alt="Slide 3"
+                            width="300"
+                        />
+                    </div>
                 </div>
             </div>
-
             <div class="barra-horario">
                 <img
-                    src="{{ url_for('static', filename='image/logo-if.png') }}"
+                    src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
                     alt="logo-ifms"
                 />
 
                 <div id="relogio"></div>
 
                 <img
-                    src="{{ url_for('static', filename='image/logo-if.png') }}"
+                    src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
                     alt="logo-ifms"
                 />
             </div>
