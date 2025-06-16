@@ -200,6 +200,22 @@ function loadTelas() {
 }
 
 function atualizarRelogio() {
+    const agora = new Date()
+    const horas = agora.getHours().toString().padStart(2, '0')
+    const minutos = agora.getMinutes().toString().padStart(2, '0')
+    const segundos = agora.getSeconds().toString().padStart(2, '0')
+
+    const horaFormatada = `${horas}:${minutos}:${segundos}`
+    const relogio = document.getElementById('relogio')
+    if (relogio) {
+        relogio.textContent = horaFormatada
+    }
+}
+
+atualizarRelogio()
+setInterval(atualizarRelogio, 1000)
+
+function atualizarRelogio() {
   const agora = new Date();
   const horas = agora.getHours().toString().padStart(2, "0");
   const minutos = agora.getMinutes().toString().padStart(2, "0");
