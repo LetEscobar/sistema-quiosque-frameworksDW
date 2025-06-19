@@ -37,7 +37,7 @@ def login_usuario():
         password = request.form.get('password')
 
         if not email_institucional_valido(email):
-            flash("Use um email institucional do IFMS (ex: nome@estudante.ifms.edu.br).")
+            flash("E-mail ou senha incorretos!")
             return redirect(url_for('login_usuario'))
 
         if len(password) < 8 or not re.search(r"\d", password) or not re.search(r"\W", password):
@@ -51,7 +51,7 @@ def login_usuario():
             return redirect(url_for('login_usuario'))
 
         if user.senha != password:
-            flash("Senha incorreta.")
+            flash("E-mail ou senha incorretos!")
             return redirect(url_for('login_usuario'))
         
         session['user_id'] = user.id
