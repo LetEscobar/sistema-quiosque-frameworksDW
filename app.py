@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
+from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, session
+from functools import wraps
 from models import db, User, Tela
 import os, glob, secrets, re
 
@@ -8,10 +9,20 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///painel.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Você precisa estar logado para acessar essa página.')
+            return redirect(url_for('login_usuario'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 with app.app_context():
     db.create_all()
 
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
@@ -43,6 +54,11 @@ def login_usuario():
             flash("Senha incorreta.")
             return redirect(url_for('login_usuario'))
         
+        session['user_id'] = user.id
+        session['user_name'] = user.name
+        flash(f"Bem-vindo, {user.name}!")
+        return redirect(url_for('index'))
+        
         flash(f"Bem-vindo, {user.name}!")
         return redirect(url_for('index')) 
 
@@ -64,10 +80,12 @@ def exibir_quiosque():
     return render_template("quiosque.html", imagens=imagens)
 
 @app.route('/usuarios')
+@login_required
 def listar_usuarios():
     return render_template('usuarios.html')
 
 @app.route('/dispositivos')
+@login_required
 def listar_dispositivos():
     return render_template('dispositivos.html')
 
