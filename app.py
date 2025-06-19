@@ -193,5 +193,11 @@ def toggle_user_status(user_id):
         db.session.rollback()
         return jsonify({"error": f"Erro ao atualizar status: {str(e)}"}), 500
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Você saiu do sistema.')
+    return redirect(url_for('login_usuario'))
+
 if __name__ == '__main__':
     app.run(debug=True, port=2000)

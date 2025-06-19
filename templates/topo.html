@@ -12,10 +12,14 @@
         />
     </a>
     <div class="profile">
-        <span>Nome do usuário</span>
-        <a href="#">
+        {% if session['user_name'] %}
+        <span>{{ session['user_name'] }}</span>
+        <a href="{{ url_for('logout') }}">
             <span class="material-icons">logout</span>
             Sair
         </a>
+        {% else %}
+        <a href="{{ url_for('login_usuario') }}">Entrar</a>
+        {% endif %}
     </div>
 </header>
