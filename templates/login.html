@@ -43,29 +43,32 @@
 
                 <div class="main">
                     <form method="POST" action="/login">
-                        <label for="">E-mail</label>
-                        <input
-                            type="text"
-                            name="email"
-                            id="mail"
-                            class="input"
-                            placeholder="Digite seu e-mail"
-                        />
-
-                        <label for="">Senha</label>
-                        <div class="input-container">
+                        <div class="item_form">
+                            <label for="">E-mail</label>
                             <input
-                                type="password"
-                                name="password"
-                                id="password"
+                                type="text"
+                                name="email"
+                                id="mail"
                                 class="input"
-                                placeholder="Digite sua senha"
+                                placeholder="Digite seu e-mail"
                             />
-                            <span
-                                class="material-symbols-outlined icon"
-                                id="toggle-password"
-                                >visibility_off</span
-                            >
+                        </div>
+                        <div class="item_form">
+                            <label for="">Senha</label>
+                            <div class="input-container">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    class="input"
+                                    placeholder="Digite sua senha"
+                                />
+                                <span
+                                    class="material-symbols-outlined icon"
+                                    id="toggle-password"
+                                    >visibility_off</span
+                                >
+                            </div>
                         </div>
                         <input type="submit" value="ENTRAR" class="button" />
                     </form>

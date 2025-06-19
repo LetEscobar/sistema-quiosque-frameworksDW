@@ -1,3 +1,6 @@
+let editing_user_id = null
+let dropAtivo = false
+
 function openModal() {
     document.getElementById('modal').style.display = 'block'
 }
@@ -84,10 +87,7 @@ function validatePassword() {
 }
 
 function validateAllFields() {
-    const isNameValid = validateName()
-    const isEmailValid = validateEmail()
-    const isPasswordValid = validatePassword()
-    return isNameValid && isEmailValid && isPasswordValid
+    return validateName() && validateEmail() && validatePassword()
 }
 
 function saveUser() {
@@ -116,39 +116,36 @@ function saveUser() {
         .catch(err => alert(err.message))
 }
 
-function loadUsers() {
-    fetch('/api/users')
-        .then(res => res.json())
-        .then(users => {
-            const tbody = document.getElementById('userTableBody')
-            if (!tbody) return
-            tbody.innerHTML = ''
-            users.forEach(user => {
-                const status_class =
-                    user.status.toLowerCase() === 'ativo' ? 'ativo' : 'inativo'
-                const is_checked =
-                    user.status.toLowerCase() === 'ativo' ? 'checked' : ''
-                const row = `<tr>
-                    <td>${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td><span class="status ${status_class}">${user.status}</span></td>
-                    <td>
-                        <button class="edit" title="Editar usuário" onclick="editUser(${user.id})">
-                            <span class="material-icons">edit</span>
-                        </button>
-                        <label class="switch" title="Ativar/Inativar usuário">
-                            <input type="checkbox" ${is_checked} onchange="toggleUserStatus(${user.id}, this.checked)" />
-                            <span class="slider"></span>
-                        </label>
-                    </td>
-                </tr>`
-                tbody.innerHTML += row
-            })
-        })
-}
+function updateUser() {
+    if (!validateAllFields()) return
 
-let editing_user_id = null
+    const nome = document.getElementById('userName').value.trim()
+    const email = document.getElementById('userEmail').value.trim()
+    const senha = document.getElementById('userPassword').value.trim()
+
+    const bodyData = { name: nome, email }
+    if (senha) bodyData.senha = senha
+
+    fetch(`/api/users/${editing_user_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar usuário')
+            return res.json()
+        })
+        .then(() => {
+            document.getElementById('userName').value = ''
+            document.getElementById('userEmail').value = ''
+            document.getElementById('userPassword').value = ''
+            document.getElementById('save').textContent = 'Salvar usuário'
+            document.getElementById('save').onclick = saveUser
+            closeModal()
+            loadUsers()
+        })
+        .catch(err => alert(err.message))
+}
 
 function editUser(id) {
     fetch(`/api/users/${id}`)
@@ -201,105 +198,54 @@ function toggleUserStatus(id, is_active) {
         })
 }
 
-function updateUser() {
-    if (!validateAllFields()) return
-
-    const nome = document.getElementById('userName').value.trim()
-    const email = document.getElementById('userEmail').value.trim()
-    const senha = document.getElementById('userPassword').value.trim()
-
-    if (!nome || !email) {
-        alert('Preencha nome e email!')
-        return
-    }
-
-    const bodyData = { name: nome, email }
-    if (senha) bodyData.senha = senha
-
-    fetch(`/api/users/${editing_user_id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyData)
-    })
-        .then(res => {
-            if (!res.ok) throw new Error('Erro ao atualizar usuário')
-            return res.json()
-        })
-        .then(() => {
-            document.getElementById('userName').value = ''
-            document.getElementById('userEmail').value = ''
-            document.getElementById('userPassword').value = ''
-            document.getElementById('save').textContent = 'Salvar usuário'
-            document.getElementById('save').onclick = saveUser
-            closeModal()
-            loadUsers()
-        })
-        .catch(err => alert(err.message))
-}
-
-function saveDispositivo() {
-    const nome_dispositivo = document.getElementById('dispName').value.trim()
-    const endereco_ip = document.getElementById('dispIP').value.trim()
-
-    if (!nome_dispositivo || !endereco_ip) {
-        alert('Preencha todos os campos corretamente!')
-        return
-    }
-
-    fetch('/api/telas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            nomeDispositivo: nome_dispositivo,
-            enderecoIp: endereco_ip
-        })
-    })
-        .then(res => {
-            if (!res.ok) throw new Error('Erro ao salvar dispositivo')
-            return res.json()
-        })
-        .then(() => {
-            document.getElementById('dispName').value = ''
-            document.getElementById('dispIP').value = ''
-            closeModal()
-            loadTelas()
-        })
-        .catch(err => alert(err.message))
-}
-
-function loadTelas() {
-    fetch('/api/telas')
+function loadUsers() {
+    fetch('/api/users')
         .then(res => res.json())
-        .then(telas => {
-            const tbody = document.getElementById('telaTableBody')
+        .then(users => {
+            const tbody = document.getElementById('userTableBody')
             if (!tbody) return
             tbody.innerHTML = ''
-            telas.forEach(tela => {
+            users.forEach(user => {
                 const status_class =
-                    tela.status.toLowerCase() === 'ativo' ? 'ativo' : 'inativo'
-                const is_checked = tela.status === 'Ativo' ? 'checked' : ''
-                const row = document.createElement('tr')
-                row.innerHTML = `
-                    <td>${tela.idTela}</td>
-                    <td>${tela.enderecoIp}</td>
-                    <td>${tela.nomeDispositivo}</td>
-                    <td><span class="status ${status_class}">${tela.status}</span></td>
+                    user.status.toLowerCase() === 'ativo' ? 'ativo' : 'inativo'
+                const is_checked =
+                    user.status.toLowerCase() === 'ativo' ? 'checked' : ''
+                const row = `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status ${status_class}">${user.status}</span></td>
                     <td>
-                        <div class="acoes">
-                            <button class="edit" title="Editar dispositivo" onclick="edit_tela(${tela.idTela})">
-                                <span class="material-icons">edit</span>
-                            </button>
-                            <label class="switch" title="Ativar/Inativar dispositivo">
-                                <input type="checkbox" ${is_checked} onchange="toggle_tela_status(${tela.idTela}, this.checked)" />
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+                        <button class="edit" onclick="editUser(${user.id})">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <label class="switch">
+                            <input type="checkbox" ${is_checked} onchange="toggleUserStatus(${user.id}, this.checked)">
+                            <span class="slider"></span>
+                        </label>
                     </td>
-                `
-                tbody.appendChild(row)
+                </tr>`
+                tbody.innerHTML += row
             })
         })
-        .catch(err => console.error('Erro ao carregar telas:', err))
+}
+
+function aplicarBusca(inputSelector, tabelaSelector) {
+    const input = document.querySelector(inputSelector)
+    const tabela = document.querySelector(tabelaSelector)
+
+    if (!input || !tabela) return
+
+    input.addEventListener('input', () => {
+        const termo = input.value.trim().toLowerCase()
+        const linhas = tabela.querySelectorAll('tr')
+
+        linhas.forEach(linha => {
+            const textoLinha = linha.textContent.toLowerCase()
+            linha.style.display = textoLinha.includes(termo) ? '' : 'none'
+        })
+    })
 }
 
 function atualizarRelogio() {
@@ -317,52 +263,43 @@ function atualizarRelogio() {
 setInterval(atualizarRelogio, 1000)
 atualizarRelogio()
 
-function aplicarBusca(inputSelector, tabelaSelector) {
-    const input = document.querySelector(inputSelector)
-    const tabela = document.querySelector(tabelaSelector)
+window.addEventListener('drop', e => {
+    e.preventDefault()
+    dropAtivo = true
+    setTimeout(() => (dropAtivo = false), 100)
+})
+window.addEventListener('dragover', e => e.preventDefault())
 
-    if (!input || !tabela) return
-
-    input.addEventListener('input', () => {
-        const termo = input.value.trim().toLowerCase()
-        const linhas = tabela.querySelectorAll('tr')
-
-        linhas.forEach(linha => {
-            const textoLinha = linha.textContent.toLowerCase()
-            const corresponde = textoLinha.includes(termo)
-            linha.style.display = corresponde ? '' : 'none'
-        })
-    })
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const carrossel = document.querySelector('.carrossel_images')
-    const imagens = carrossel.querySelectorAll('img')
-    let index = 0
-    let largura = imagens[0].clientWidth
-
-    function avancar() {
-        index++
-        if (index >= imagens.length) {
-            index = 0
-            carrossel.style.transition = 'none'
-            carrossel.style.transform = `translateX(0px)`
-        } else {
-            carrossel.style.transition = 'transform 0.5s ease-in-out'
-            carrossel.style.transform = `translateX(-${index * largura}px)`
-        }
+window.addEventListener('click', function (event) {
+    const modal = document.getElementById('modal')
+    if (event.target === modal && !dropAtivo) {
+        modal.style.display = 'none'
     }
-
-    setInterval(avancar, 5000)
-
-    window.addEventListener('resize', () => {
-        largura = imagens[0].clientWidth
-    })
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('userTableBody')) loadUsers()
-    if (document.getElementById('telaTableBody')) loadTelas()
+    if (document.getElementById('userTableBody')) {
+        loadUsers()
+        aplicarBusca('#buscaUsuarios', '#userTableBody')
+    }
+
+    document.querySelectorAll('input[required]').forEach(input => {
+        const label = input.closest('.item_form')?.querySelector('label')
+        if (label && !label.innerHTML.includes('*')) {
+            label.innerHTML += ' <span class="required-star">*</span>'
+        }
+    })
+
+    const modal = document.getElementById('modal')
+    if (modal) {
+        modal.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault()
+                const botaoSalvar = document.getElementById('save')
+                if (botaoSalvar) botaoSalvar.click()
+            }
+        })
+    }
 
     const carrossel = document.getElementById('carrossel')
     if (carrossel) {
@@ -402,32 +339,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 atualizarTransform()
             })
         }
-    }
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('userTableBody')) {
-        loadUsers()
-        aplicarBusca('#buscaUsuarios', '#userTableBody')
-    }
-
-    if (document.getElementById('telaTableBody')) {
-        loadTelas()
-        aplicarBusca('#buscaDispositivos', '#telaTableBody')
-    }
-    document.querySelectorAll('input[required]').forEach(input => {
-        const label = input.closest('.item_form')?.querySelector('label')
-        if (label && !label.innerHTML.includes('*')) {
-            label.innerHTML += ' <span class="required-star">*</span>'
-        }
-    })
-})
-
-window.addEventListener('click', function (event) {
-    const modal = document.getElementById('modal')
-    const modalContent = document.querySelector('.modal-content')
-
-    if (event.target === modal) {
-        modal.style.display = 'none'
     }
 })
