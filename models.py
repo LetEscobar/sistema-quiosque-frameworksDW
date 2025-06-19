@@ -9,6 +9,11 @@ class User(db.Model):
     status = db.Column(db.String(10), nullable=False, default='Ativo')
     senha = db.Column(db.String(100), nullable=False)
     logUser = db.relationship('Log', backref=db.backref('user'))
+    is_admin = db.Column(db.Boolean, default=False)
+    
+    @property
+    def is_active(self):
+        return self.status == 'Ativo'
     
 class Tela(db.Model):
     idTela = db.Column(db.Integer, primary_key=True)

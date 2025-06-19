@@ -14,6 +14,7 @@
             <span class="material-icons">devices</span>
             Dispositivos
         </a>
+        {% if session.get('user_id') and session.get('is_admin') %}
         <a
             href="{{ url_for('listar_usuarios') }}"
             class="{% if request.path == url_for('listar_usuarios') %}active{% endif %}"
@@ -21,6 +22,7 @@
             <span class="material-icons">people</span>
             Usuários
         </a>
+        {% endif %}
         <a href="#" class="{% if request.path == '#' %}active{% endif %}">
             <span class="material-icons">campaign</span>
             Campanhas

@@ -13,7 +13,7 @@
     </a>
     <div class="profile">
         {% if session['user_name'] %}
-        <span>{{ session['user_name'] }}</span>
+        <span>Olá, {{ session['user_name'] }}!</span>
         <a href="{{ url_for('logout') }}">
             <span class="material-icons">logout</span>
             Sair

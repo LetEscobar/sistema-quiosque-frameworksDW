@@ -40,6 +40,15 @@ content %}
                 >
                     <span class="material-icons">edit</span>
                 </button>
+
+                <label class="switch" title="Ativar/Inativar usuário">
+                    <input type="checkbox" {% if user.is_active %}checked{%
+                    endif %} {% if user.id == current_user_id and user.is_admin
+                    %}disabled{% else %} onchange="toggleUserStatus({{ user.id
+                    }}, this.checked)" {% endif %} />
+
+                    <span class="slider"></span>
+                </label>
             </td>
         </tr>
         {% endfor %}

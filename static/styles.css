@@ -314,3 +314,8 @@ h2 {
     text-align: center;
     margin: 0 auto;
 }
+
+.switch.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}

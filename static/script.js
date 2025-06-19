@@ -61,6 +61,11 @@ function validatePassword() {
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
 
     if (!value) {
+        if (editing_user_id) {
+            error.textContent = ''
+            passwordInput.classList.remove('input-error')
+            return true
+        }
         error.textContent = 'A senha é obrigatória.'
         passwordInput.classList.add('input-error')
         return false
@@ -172,14 +177,33 @@ function toggleUserStatus(id, is_active) {
         body: JSON.stringify({ status })
     })
         .then(res => {
-            if (!res.ok) throw new Error('Erro ao atualizar status.')
+            if (!res.ok) {
+                return res.json().then(data => {
+                    alert(data.error || 'Erro ao atualizar status.')
+                    const checkbox = document.querySelector(
+                        `input[type="checkbox"][onchange*="toggleUserStatus(${id}"]`
+                    )
+                    if (checkbox) checkbox.checked = !is_active
+                    throw new Error('Erro ao atualizar status')
+                })
+            }
             return res.json()
         })
         .then(() => loadUsers())
-        .catch(err => alert(err.message))
+        .catch(err => {
+            if (err.message !== 'Erro ao atualizar status') {
+                alert('Erro de comunicação com o servidor.')
+                const checkbox = document.querySelector(
+                    `input[type="checkbox"][onchange*="toggleUserStatus(${id}"]`
+                )
+                if (checkbox) checkbox.checked = !is_active
+            }
+        })
 }
 
 function updateUser() {
+    if (!validateAllFields()) return
+
     const nome = document.getElementById('userName').value.trim()
     const email = document.getElementById('userEmail').value.trim()
     const senha = document.getElementById('userPassword').value.trim()
@@ -189,10 +213,13 @@ function updateUser() {
         return
     }
 
+    const bodyData = { name: nome, email }
+    if (senha) bodyData.senha = senha
+
     fetch(`/api/users/${editing_user_id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome, email, senha })
+        body: JSON.stringify(bodyData)
     })
         .then(res => {
             if (!res.ok) throw new Error('Erro ao atualizar usuário')

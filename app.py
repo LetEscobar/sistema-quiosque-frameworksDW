@@ -15,11 +15,40 @@ def login_required(f):
         if 'user_id' not in session:
             flash('Você precisa estar logado para acessar essa página.')
             return redirect(url_for('login_usuario'))
+        
+        user = User.query.get(session['user_id'])
+        if not user or user.status != 'Ativo':
+            session.clear()
+            flash('Sua conta está inativa ou inválida. Faça login novamente.')
+            return redirect(url_for('login_usuario'))
+        
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_id = session.get('user_id')
+        user = User.query.get(user_id)
+        if not user or not user.is_admin:
+            flash('Acesso restrito ao administrador.')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 with app.app_context():
     db.create_all()
+    if not User.query.filter_by(email='admin@estudante.ifms.edu.br').first():
+        admin_user = User(
+            name='Administrador',
+            email='admin@estudante.ifms.edu.br',
+            senha='Senha@123',
+            status='Ativo',
+            is_admin=True
+        )
+        db.session.add(admin_user)
+        db.session.commit()
 
 @app.route('/')
 @login_required
@@ -50,17 +79,19 @@ def login_usuario():
             flash("Usuário não encontrado.")
             return redirect(url_for('login_usuario'))
 
+        if user.status != 'Ativo':
+            flash("Usuário inativo. Contate o administrador.")
+            return redirect(url_for('login_usuario'))
+
         if user.senha != password:
             flash("E-mail ou senha incorretos!")
             return redirect(url_for('login_usuario'))
         
         session['user_id'] = user.id
         session['user_name'] = user.name
+        session['is_admin'] = user.is_admin
         flash(f"Bem-vindo, {user.name}!")
         return redirect(url_for('index'))
-        
-        flash(f"Bem-vindo, {user.name}!")
-        return redirect(url_for('index')) 
 
     return render_template('login.html')
 
@@ -81,8 +112,10 @@ def exibir_quiosque():
 
 @app.route('/usuarios')
 @login_required
+@admin_required
 def listar_usuarios():
-    return render_template('usuarios.html')
+    users = User.query.all()
+    return render_template('usuarios.html', users=users, current_user_id=session.get('user_id'))
 
 @app.route('/dispositivos')
 @login_required
@@ -185,6 +218,9 @@ def toggle_user_status(user_id):
     if 'status' not in data:
         return jsonify({"error": "Campo 'status' obrigatório"}), 400
 
+    if session.get('user_id') == user.id and user.is_admin:
+        return jsonify({"error": "Você não pode desativar sua própria conta de administrador."}), 403
+
     user.status = data['status']
     try:
         db.session.commit()
@@ -192,6 +228,7 @@ def toggle_user_status(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Erro ao atualizar status: {str(e)}"}), 500
+
 
 @app.route('/logout')
 def logout():
