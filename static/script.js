@@ -103,7 +103,10 @@ function saveUser() {
         body: JSON.stringify({ name: nome, email, senha })
     })
         .then(res => {
-            if (!res.ok) throw new Error('Erro ao salvar usuário')
+            if (!res.ok)
+                throw new Error(
+                    'Erro ao salvar usuário! Verifique se os dados foram preenchidos corretamente!  '
+                )
             return res.json()
         })
         .then(() => {
@@ -340,4 +343,130 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         }
     }
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTelas()
+        aplicarBusca('#buscaDispositivos', '#telaTableBody')
+    })
 })
+
+function mascaraIP(input) {
+    let valor = input.value.replace(/[^0-9]/g, '')
+
+    if (valor.length > 3) valor = valor.slice(0, 3) + '.' + valor.slice(3)
+    if (valor.length > 7) valor = valor.slice(0, 7) + '.' + valor.slice(7)
+    if (valor.length > 11)
+        valor = valor.slice(0, 11) + '.' + valor.slice(11, 15)
+
+    input.value = valor
+}
+
+function validateDispositivo() {
+    const nome = document.getElementById('dispName')
+    const ip = document.getElementById('dispIP')
+    const nomeError = document.getElementById('dispNameError')
+    const ipError = document.getElementById('dispIPError')
+    let valido = true
+
+    if (!nome.value.trim()) {
+        nomeError.textContent = 'O nome é obrigatório.'
+        nome.classList.add('input-error')
+        valido = false
+    } else {
+        nomeError.textContent = ''
+        nome.classList.remove('input-error')
+    }
+
+    const ipRegex =
+        /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){2}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
+    if (!ipRegex.test(ip.value.trim())) {
+        ipError.textContent = 'IP inválido.'
+        ip.classList.add('input-error')
+        valido = false
+    } else {
+        ipError.textContent = ''
+        ip.classList.remove('input-error')
+    }
+
+    return valido
+}
+
+function isValidIP(ip) {
+    const regex =
+        /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/
+    return regex.test(ip)
+}
+
+function loadTelas() {
+    fetch('/api/telas')
+        .then(res => res.json())
+        .then(telas => {
+            const tbody = document.getElementById('telaTableBody')
+            if (!tbody) return
+            tbody.innerHTML = ''
+            telas.forEach(tela => {
+                const status_class =
+                    tela.status === 'Ativo' ? 'ativo' : 'inativo'
+                const is_checked = tela.status === 'Ativo' ? 'checked' : ''
+                const row = `
+                    <tr>
+                        <td>${tela.id}</td>
+                        <td>${tela.enderecoIp}</td>
+                        <td>${tela.nome}</td>
+                        <td><span class="status ${status_class}">${tela.status}</span></td>
+                        <td>
+                            <button class="edit" onclick="editDispositivo(${tela.id})">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <label class="switch">
+                                <input type="checkbox" ${is_checked}
+                                       onchange="toggleDispositivoStatus(${tela.id}, this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                    </tr>
+                `
+                tbody.innerHTML += row
+            })
+        })
+        .catch(err => {
+            alert('Erro ao carregar dispositivos: ' + err.message)
+        })
+}
+
+function saveDispositivo() {
+    const nomeInput = document.getElementById('dispName')
+    const ipInput = document.getElementById('dispIP')
+    const nome_dispositivo = nomeInput.value.trim()
+    const endereco_ip = ipInput.value.trim()
+
+    if (!validateDispositivo()) return
+
+    fetch('/api/telas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            nome_dispositivo: nome_dispositivo,
+            endereco_ip: endereco_ip
+        })
+    })
+        .then(async res => {
+            if (!res.ok) {
+                const data = await res.json()
+                if (data.error && data.error.includes('IP')) {
+                    const ipError = document.getElementById('dispIPError')
+                    ipError.textContent = data.error
+                    ipInput.classList.add('input-error')
+                }
+                throw new Error(data.error || 'Erro ao salvar dispositivo')
+            }
+            return res.json()
+        })
+        .then(() => {
+            nomeInput.value = ''
+            ipInput.value = ''
+            closeModal()
+            loadTelas()
+        })
+        .catch(err => console.error(err.message))
+}

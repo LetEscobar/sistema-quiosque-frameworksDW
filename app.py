@@ -1,240 +1,36 @@
-from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, session
-from functools import wraps
-from models import db, User, Tela
-import os, glob, secrets, re
+from flask import Flask
+from models import db
+from routes import auth_bp, users_bp, telas_bp, main_bp
+from config import Config
 
-app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///painel.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('Você precisa estar logado para acessar essa página.')
-            return redirect(url_for('login_usuario'))
-        
-        user = User.query.get(session['user_id'])
-        if not user or user.status != 'Ativo':
-            session.clear()
-            flash('Sua conta está inativa ou inválida. Faça login novamente.')
-            return redirect(url_for('login_usuario'))
-        
-        return f(*args, **kwargs)
-    return decorated_function
-
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        user_id = session.get('user_id')
-        user = User.query.get(user_id)
-        if not user or not user.is_admin:
-            flash('Acesso restrito ao administrador.')
-            return redirect(url_for('index'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-with app.app_context():
-    db.create_all()
-    if not User.query.filter_by(email='admin@estudante.ifms.edu.br').first():
-        admin_user = User(
-            name='Administrador',
-            email='admin@estudante.ifms.edu.br',
-            senha='Senha@123',
-            status='Ativo',
-            is_admin=True
-        )
-        db.session.add(admin_user)
-        db.session.commit()
-
-@app.route('/')
-@login_required
-def index():
-    return render_template('index.html')
-
-def email_institucional_valido(email):
-    padrao = r"^[\w\.-]+@estudante\.ifms\.edu\.br$"
-    return bool(re.match(padrao, email))
-
-@app.route('/login', methods=['GET', 'POST'])
-def login_usuario():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        if not email_institucional_valido(email):
-            flash("E-mail ou senha incorretos!")
-            return redirect(url_for('login_usuario'))
-
-        if len(password) < 8 or not re.search(r"\d", password) or not re.search(r"\W", password):
-            flash("A senha precisa ter pelo menos 8 caracteres, 1 número e 1 caractere especial.")
-            return redirect(url_for('login_usuario'))
-        
-        user = User.query.filter_by(email=email).first()
-
-        if not user:
-            flash("Usuário não encontrado.")
-            return redirect(url_for('login_usuario'))
-
-        if user.status != 'Ativo':
-            flash("Usuário inativo. Contate o administrador.")
-            return redirect(url_for('login_usuario'))
-
-        if user.senha != password:
-            flash("E-mail ou senha incorretos!")
-            return redirect(url_for('login_usuario'))
-        
-        session['user_id'] = user.id
-        session['user_name'] = user.name
-        session['is_admin'] = user.is_admin
-        flash(f"Bem-vindo, {user.name}!")
-        return redirect(url_for('index'))
-
-    return render_template('login.html')
-
-
-@app.route('/quiosque')
-def exibir_quiosque():
-    img_dir = os.path.join(app.static_folder, "image")
-    extensoes = ("*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp")
-
-    imagens = []
-    for ext in extensoes:
-        imagens.extend(
-            os.path.basename(p)
-            for p in glob.glob(os.path.join(img_dir, ext))
-        )
-        
-    return render_template("quiosque.html", imagens=imagens)
-
-@app.route('/usuarios')
-@login_required
-@admin_required
-def listar_usuarios():
-    users = User.query.all()
-    return render_template('usuarios.html', users=users, current_user_id=session.get('user_id'))
-
-@app.route('/dispositivos')
-@login_required
-def listar_dispositivos():
-    return render_template('dispositivos.html')
-
-@app.route('/api/telas', methods=['GET'])
-def get_telas():
-    telas = Tela.query.all()
-    telas_data = [{
-        "id_tela": t.idTela,
-        "nome_dispositivo": t.nomeDispositivo,
-        "endereco_ip": t.enderecoIp,
-        "status": t.status,
-    } for t in telas]
-    return jsonify(telas_data)
-
-@app.route('/api/telas', methods=['POST'])
-def create_telas():
-    data = request.json
-    if not data or not all(k in data for k in ('nome_dispositivo', 'endereco_ip')):
-        return jsonify({"error": "Dados incompletos"}), 400
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
     
-    try:
-        nova_tela = Tela(
-            nomeDispositivo=data['nome_dispositivo'],
-            enderecoIp=data['endereco_ip'],
-            status='Ativo'
-        )
-        db.session.add(nova_tela)
-        db.session.commit()
-        return jsonify({"message": "Tela criada com sucesso!"}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Erro ao salvar tela: {str(e)}"}), 500
+    db.init_app(app)
 
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(telas_bp)
+    app.register_blueprint(main_bp)
+    
+    with app.app_context():
+        db.create_all()
+        from models import User
+        import secrets
+        if not User.query.filter_by(email='admin@estudante.ifms.edu.br').first():
+            admin_user = User(
+                name='Administrador',
+                email='admin@estudante.ifms.edu.br',
+                senha='Senha@123',
+                status='Ativo',
+                is_admin=True
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+    
+    return app
 
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    users_data = [{
-        "id": u.id,
-        "name": u.name,
-        "email": u.email,
-        "status": u.status,
-        "senha": u.senha  # remover depois
-    } for u in users]
-    return jsonify(users_data)
-
-@app.route('/api/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get_or_404(user_id)
-    return jsonify({
-        "id": user.id,
-        "name": user.name,
-        "email": user.email,
-        "status": user.status
-    })
-
-@app.route('/api/users', methods=['POST'])
-def create_user():
-    data = request.json
-    try:
-        new_user = User(
-            name=data['name'],
-            email=data['email'],
-            senha=data['senha'],
-            status='Ativo'
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({"message": "Usuário criado com sucesso!"}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Erro ao criar usuário: {str(e)}"}), 500
-
-@app.route('/api/users/<int:user_id>', methods=['PUT'])
-def update_user(user_id):
-    user = User.query.get_or_404(user_id)
-    data = request.json
-
-    user.name = data.get('name', user.name)
-    user.email = data.get('email', user.email)
-
-    if 'senha' in data and data['senha'].strip():
-        user.senha = data['senha']
-
-    try:
-        db.session.commit()
-        return jsonify({"message": "Usuário atualizado com sucesso!"})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Erro ao atualizar usuário: {str(e)}"}), 500
-
-@app.route('/api/users/<int:user_id>/status', methods=['PATCH'])
-def toggle_user_status(user_id):
-    user = User.query.get_or_404(user_id)
-    data = request.json
-
-    if 'status' not in data:
-        return jsonify({"error": "Campo 'status' obrigatório"}), 400
-
-    if session.get('user_id') == user.id and user.is_admin:
-        return jsonify({"error": "Você não pode desativar sua própria conta de administrador."}), 403
-
-    user.status = data['status']
-    try:
-        db.session.commit()
-        return jsonify({"message": f"Status do usuário atualizado para {user.status}!"})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Erro ao atualizar status: {str(e)}"}), 500
-
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    flash('Você saiu do sistema.')
-    return redirect(url_for('login_usuario'))
-
-if __name__ == '__main__':
+if __name__ == "__main__":
+    app = create_app()
     app.run(debug=True, port=2000)
