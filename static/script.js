@@ -1,12 +1,12 @@
-function open_modal() {
+function openModal() {
     document.getElementById('modal').style.display = 'block'
 }
 
-function close_modal() {
+function closeModal() {
     document.getElementById('modal').style.display = 'none'
 }
 
-function save_user() {
+function saveUser() {
     const nome = document.getElementById('userName').value.trim()
     const email = document.getElementById('userEmail').value.trim()
     const senha = document.getElementById('userPassword').value.trim()
@@ -199,20 +199,6 @@ function load_telas() {
         .catch(err => console.error('Erro ao carregar telas:', err))
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const carrossel_images = document.querySelector('.carrossel-images')
-    const imagens = document.querySelectorAll('.carrossel-images img')
-    let index = 0
-
-    function mostrar_proxima_imagem() {
-        index = (index + 1) % imagens.length
-        const largura = imagens[0].clientWidth
-        carrossel_images.style.transform = `translateX(-${index * largura}px)`
-    }
-
-    setInterval(mostrar_proxima_imagem, 5000)
-})
-
 function atualizar_relogio() {
     const agora = new Date()
     const horas = agora.getHours().toString().padStart(2, '0')
@@ -227,6 +213,31 @@ function atualizar_relogio() {
 
 setInterval(atualizar_relogio, 1000)
 atualizar_relogio()
+
+document.addEventListener('DOMContentLoaded', () => {
+    const carrossel = document.querySelector('.carrossel_images')
+    const imagens = carrossel.querySelectorAll('img')
+    let index = 0
+    let largura = imagens[0].clientWidth
+
+    function avancar() {
+        index++
+        if (index >= imagens.length) {
+            index = 0
+            carrossel.style.transition = 'none'
+            carrossel.style.transform = `translateX(0px)`
+        } else {
+            carrossel.style.transition = 'transform 0.5s ease-in-out'
+            carrossel.style.transform = `translateX(-${index * largura}px)`
+        }
+    }
+
+    setInterval(avancar, 5000)
+
+    window.addEventListener('resize', () => {
+        largura = imagens[0].clientWidth
+    })
+})
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('userTableBody')) load_users()
@@ -270,5 +281,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 atualizar_transform()
             })
         }
+    }
+})
+
+window.addEventListener('click', function (event) {
+    const modal = document.getElementById('modal')
+    const modalContent = document.querySelector('.modal-content')
+
+    if (event.target === modal) {
+        modal.style.display = 'none'
     }
 })
