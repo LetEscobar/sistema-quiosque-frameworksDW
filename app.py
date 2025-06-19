@@ -41,13 +41,13 @@ def login_usuario():
 
         if user.senha != password:
             flash("Senha incorreta.")
-            return redirect(url_for('index'))
+            return redirect(url_for('login_usuario'))
         
         flash(f"Bem-vindo, {user.name}!")
-        return redirect(url_for('listar_usuarios'))
+        return redirect(url_for('index')) 
 
-    print("funcionando!")
     return render_template('login.html')
+
 
 @app.route('/quiosque')
 def exibir_quiosque():

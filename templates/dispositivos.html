@@ -1,7 +1,12 @@
 {% extends 'base.html' %} {% block title %}Dispositivos{% endblock %} {% block
 content %}
 <div class="search-cta">
-    <input type="text" placeholder="Buscar dispositivo" class="search" />
+    <input
+        type="text"
+        placeholder="Busque por Nome, Endereço IP ou ID do dispositivo"
+        class="search"
+        id="buscaDispositivos"
+    />
     <button class="btn" onclick="openModal()">Cadastrar nova tela</button>
 </div>
 
@@ -24,7 +29,7 @@ content %}
             <h2>Cadastrar Tela</h2>
             <span class="close" onclick="closeModal()">&times;</span>
         </div>
-        <div class="login">
+        <div class="form">
             <label for="dispName">Nome</label>
             <input
                 type="text"
@@ -33,7 +38,9 @@ content %}
             />
             <label for="dispIP">Endereço IP</label>
             <input type="text" id="dispIP" placeholder="192.168.1.1" />
-            <button onclick="saveTela()" id="save">Salvar alterações</button>
+            <button onclick="saveDispositivo()" id="save">
+                Salvar alterações
+            </button>
         </div>
     </div>
 </div>

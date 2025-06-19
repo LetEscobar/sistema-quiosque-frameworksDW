@@ -121,8 +121,11 @@ body {
     border: none;
     padding: 10px 15px;
     border-radius: 8px;
-    cursor: pointer;
     width: 250px;
+}
+
+button {
+    cursor: pointer;
 }
 
 .table {
@@ -263,8 +266,8 @@ h2 {
     font-weight: 500;
 }
 
-.modal-content .login {
-    gap: 15px;
+.modal-content .form {
+    gap: 16px;
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -272,11 +275,32 @@ h2 {
     font-weight: 500;
 }
 
-.login input {
+.item_form {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form input {
     border: none;
     background-color: #f0f0f0;
     outline: none;
     padding: 8px;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+}
+
+.input-error {
+    border: 1px solid #e74c3c !important;
+    background-color: #ffe6e6 !important;
+}
+
+.required-star {
+    color: red;
+    font-weight: bold;
 }
 
 #save {

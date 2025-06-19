@@ -6,15 +6,91 @@ function closeModal() {
     document.getElementById('modal').style.display = 'none'
 }
 
+function validateName() {
+    const nameInput = document.getElementById('userName')
+    const error = document.getElementById('nameError')
+    const value = nameInput.value.trim()
+
+    if (!value) {
+        error.textContent = 'O nome é obrigatório.'
+        nameInput.classList.add('input-error')
+        return false
+    }
+
+    if (!/^[A-Za-zÀ-ú\s]+$/.test(value)) {
+        error.textContent = 'O nome deve conter apenas letras.'
+        nameInput.classList.add('input-error')
+        return false
+    }
+
+    error.textContent = ''
+    nameInput.classList.remove('input-error')
+    return true
+}
+
+function validateEmail() {
+    const emailInput = document.getElementById('userEmail')
+    const error = document.getElementById('emailError')
+    const value = emailInput.value.trim()
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!value) {
+        error.textContent = 'O e-mail é obrigatório.'
+        emailInput.classList.add('input-error')
+        return false
+    }
+
+    if (!regex.test(value)) {
+        error.textContent = 'Formato de e-mail inválido.'
+        emailInput.classList.add('input-error')
+        return false
+    }
+
+    error.textContent = ''
+    emailInput.classList.remove('input-error')
+    return true
+}
+
+function validatePassword() {
+    const passwordInput = document.getElementById('userPassword')
+    const error = document.getElementById('passwordError')
+    const value = passwordInput.value
+
+    const lengthOk = value.length >= 8
+    const hasNumber = /\d/.test(value)
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
+
+    if (!value) {
+        error.textContent = 'A senha é obrigatória.'
+        passwordInput.classList.add('input-error')
+        return false
+    }
+
+    if (!lengthOk || !hasNumber || !hasSpecial) {
+        error.textContent =
+            'A senha deve ter pelo menos 8 caracteres, 1 número e 1 caractere especial.'
+        passwordInput.classList.add('input-error')
+        return false
+    }
+
+    error.textContent = ''
+    passwordInput.classList.remove('input-error')
+    return true
+}
+
+function validateAllFields() {
+    const isNameValid = validateName()
+    const isEmailValid = validateEmail()
+    const isPasswordValid = validatePassword()
+    return isNameValid && isEmailValid && isPasswordValid
+}
+
 function saveUser() {
+    if (!validateAllFields()) return
+
     const nome = document.getElementById('userName').value.trim()
     const email = document.getElementById('userEmail').value.trim()
     const senha = document.getElementById('userPassword').value.trim()
-
-    if (!nome || !email || !senha) {
-        alert('Preencha nome, email e senha!')
-        return
-    }
 
     fetch('/api/users', {
         method: 'POST',
@@ -29,13 +105,13 @@ function saveUser() {
             document.getElementById('userName').value = ''
             document.getElementById('userEmail').value = ''
             document.getElementById('userPassword').value = ''
-            close_modal()
-            load_users()
+            closeModal()
+            loadUsers()
         })
         .catch(err => alert(err.message))
 }
 
-function load_users() {
+function loadUsers() {
     fetch('/api/users')
         .then(res => res.json())
         .then(users => {
@@ -53,11 +129,11 @@ function load_users() {
                     <td>${user.email}</td>
                     <td><span class="status ${status_class}">${user.status}</span></td>
                     <td>
-                        <button class="edit" title="Editar usuário" onclick="edit_user(${user.id})">
+                        <button class="edit" title="Editar usuário" onclick="editUser(${user.id})">
                             <span class="material-icons">edit</span>
                         </button>
                         <label class="switch" title="Ativar/Inativar usuário">
-                            <input type="checkbox" ${is_checked} onchange="toggle_user_status(${user.id}, this.checked)" />
+                            <input type="checkbox" ${is_checked} onchange="toggleUserStatus(${user.id}, this.checked)" />
                             <span class="slider"></span>
                         </label>
                     </td>
@@ -69,7 +145,7 @@ function load_users() {
 
 let editing_user_id = null
 
-function edit_user(id) {
+function editUser(id) {
     fetch(`/api/users/${id}`)
         .then(res => {
             if (!res.ok) throw new Error('Usuário não encontrado.')
@@ -81,13 +157,13 @@ function edit_user(id) {
             document.getElementById('userEmail').value = user.email
             document.getElementById('userPassword').value = ''
             document.getElementById('save').textContent = 'Salvar alterações'
-            document.getElementById('save').onclick = update_user
-            open_modal()
+            document.getElementById('save').onclick = updateUser
+            openModal()
         })
         .catch(err => alert(err.message))
 }
 
-function toggle_user_status(id, is_active) {
+function toggleUserStatus(id, is_active) {
     const status = is_active ? 'Ativo' : 'Inativo'
 
     fetch(`/api/users/${id}/status`, {
@@ -99,11 +175,11 @@ function toggle_user_status(id, is_active) {
             if (!res.ok) throw new Error('Erro ao atualizar status.')
             return res.json()
         })
-        .then(() => load_users())
+        .then(() => loadUsers())
         .catch(err => alert(err.message))
 }
 
-function update_user() {
+function updateUser() {
     const nome = document.getElementById('userName').value.trim()
     const email = document.getElementById('userEmail').value.trim()
     const senha = document.getElementById('userPassword').value.trim()
@@ -127,14 +203,14 @@ function update_user() {
             document.getElementById('userEmail').value = ''
             document.getElementById('userPassword').value = ''
             document.getElementById('save').textContent = 'Salvar usuário'
-            document.getElementById('save').onclick = save_user
-            close_modal()
-            load_users()
+            document.getElementById('save').onclick = saveUser
+            closeModal()
+            loadUsers()
         })
         .catch(err => alert(err.message))
 }
 
-function save_tela() {
+function saveDispositivo() {
     const nome_dispositivo = document.getElementById('dispName').value.trim()
     const endereco_ip = document.getElementById('dispIP').value.trim()
 
@@ -152,19 +228,19 @@ function save_tela() {
         })
     })
         .then(res => {
-            if (!res.ok) throw new Error('Erro ao salvar tela')
+            if (!res.ok) throw new Error('Erro ao salvar dispositivo')
             return res.json()
         })
         .then(() => {
             document.getElementById('dispName').value = ''
             document.getElementById('dispIP').value = ''
-            close_modal()
-            load_telas()
+            closeModal()
+            loadTelas()
         })
         .catch(err => alert(err.message))
 }
 
-function load_telas() {
+function loadTelas() {
     fetch('/api/telas')
         .then(res => res.json())
         .then(telas => {
@@ -199,7 +275,7 @@ function load_telas() {
         .catch(err => console.error('Erro ao carregar telas:', err))
 }
 
-function atualizar_relogio() {
+function atualizarRelogio() {
     const agora = new Date()
     const horas = agora.getHours().toString().padStart(2, '0')
     const minutos = agora.getMinutes().toString().padStart(2, '0')
@@ -211,8 +287,26 @@ function atualizar_relogio() {
     }
 }
 
-setInterval(atualizar_relogio, 1000)
-atualizar_relogio()
+setInterval(atualizarRelogio, 1000)
+atualizarRelogio()
+
+function aplicarBusca(inputSelector, tabelaSelector) {
+    const input = document.querySelector(inputSelector)
+    const tabela = document.querySelector(tabelaSelector)
+
+    if (!input || !tabela) return
+
+    input.addEventListener('input', () => {
+        const termo = input.value.trim().toLowerCase()
+        const linhas = tabela.querySelectorAll('tr')
+
+        linhas.forEach(linha => {
+            const textoLinha = linha.textContent.toLowerCase()
+            const corresponde = textoLinha.includes(termo)
+            linha.style.display = corresponde ? '' : 'none'
+        })
+    })
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const carrossel = document.querySelector('.carrossel_images')
@@ -240,8 +334,8 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('userTableBody')) load_users()
-    if (document.getElementById('telaTableBody')) load_telas()
+    if (document.getElementById('userTableBody')) loadUsers()
+    if (document.getElementById('telaTableBody')) loadTelas()
 
     const carrossel = document.getElementById('carrossel')
     if (carrossel) {
@@ -256,20 +350,20 @@ document.addEventListener('DOMContentLoaded', () => {
             let index = 0
             let largura = container.offsetWidth
 
-            function atualizar_transform() {
+            function atualizarTransform() {
                 carrossel.style.transform = `translateX(${-index * largura}px)`
             }
 
             function avancar() {
                 index++
                 carrossel.style.transition = 'transform 0.5s ease-in-out'
-                atualizar_transform()
+                atualizarTransform()
 
                 if (index === total) {
                     setTimeout(() => {
                         carrossel.style.transition = 'none'
                         index = 0
-                        atualizar_transform()
+                        atualizarTransform()
                     }, 500)
                 }
             }
@@ -278,10 +372,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             window.addEventListener('resize', () => {
                 largura = container.offsetWidth
-                atualizar_transform()
+                atualizarTransform()
             })
         }
     }
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('userTableBody')) {
+        loadUsers()
+        aplicarBusca('#buscaUsuarios', '#userTableBody')
+    }
+
+    if (document.getElementById('telaTableBody')) {
+        loadTelas()
+        aplicarBusca('#buscaDispositivos', '#telaTableBody')
+    }
+    document.querySelectorAll('input[required]').forEach(input => {
+        const label = input.closest('.item_form')?.querySelector('label')
+        if (label && !label.innerHTML.includes('*')) {
+            label.innerHTML += ' <span class="required-star">*</span>'
+        }
+    })
 })
 
 window.addEventListener('click', function (event) {
