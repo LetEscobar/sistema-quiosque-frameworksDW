@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block title %}Horários{% endblock %} {% block
+content %}
+<div class="search-cta">
+    <input type="text" placeholder="Buscar turma" class="search" />
+    <button class="btn" onclick="openModal()">Cadastrar nova turma</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Período</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="telaTableBody">
+      {% for turma in turmas %}
+        <tr>
+            <td>{{ turma.id }}</td>
+            <td>{{ turma.nome }}</td>
+            <td>{{ turma.periodo }}</td>
+            <td>
+                <button class="edit" title="Editar turma" onclick="editTela('{{ turma.id }}')">
+                    <span class="material-icons">edit</span>
+                </button>
+            </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+{% endblock %} {% block extra_modal %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="check">
+            <h2>Cadastrar nova turma</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="login">
+            <label for="turmaName">Nome da Turma</label>
+            <input
+                type="text"
+                id="turmaName"
+                placeholder="Nome da turma"
+            />
+            <label for="turmaPeriodo">Período</label>
+            <input type="text" id="turmaPeriodo" placeholder="Matutino" />
+            <button onclick="saveTela()" id="save">Salvar alterações</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

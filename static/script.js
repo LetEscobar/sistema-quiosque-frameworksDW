@@ -272,3 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 })
+
+function create_class(id, name, period, action) {
+    document.getElementById('modal').style.display = 'block'
+}

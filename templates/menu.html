@@ -29,7 +29,7 @@
             <span class="material-icons">collections</span>
             Conteúdos
         </a>
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+        <a href="{{ url_for('listar_horarios') }}" class="{% if request.path == url_for('listar_horarios') %}active{% endif %}">
             <span class="material-icons">schedule</span>
             Horários
         </a>
