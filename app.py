@@ -1,6 +1,6 @@
 from flask import Flask
 from models import db
-from routes import auth_bp, users_bp, telas_bp, main_bp
+from routes import auth_bp, users_bp, telas_bp, main_bp, campanhas_bp
 from config import Config
 
 def create_app():
@@ -13,6 +13,7 @@ def create_app():
     app.register_blueprint(users_bp)
     app.register_blueprint(telas_bp)
     app.register_blueprint(main_bp)
+    app.register_blueprint(campanhas_bp)
     
     with app.app_context():
         db.create_all()

@@ -238,9 +238,10 @@ input:checked + .slider:before {
 
 .modal-content {
     background: white;
-    margin: 10% auto;
+    margin: 5% auto;
     width: 400px;
     border-radius: 10px;
+    height: max-content;
     position: relative;
 }
 
@@ -318,4 +319,24 @@ h2 {
 .switch.disabled {
     opacity: 0.5;
     pointer-events: none;
+}
+
+input[type='color'] {
+    width: 50px;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+input[type='color']::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type='color']::-webkit-color-swatch {
+    border-radius: 8px;
 }

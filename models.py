@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -59,3 +60,10 @@ class Log(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
+class Campanha(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(100), nullable=False)
+    cor = db.Column(db.String(7), nullable=False, default="#FFFFFF")
+    status = db.Column(db.String(10), nullable=False, default="Ativo")
+    inicio = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    fim = db.Column(db.DateTime, nullable=True)
