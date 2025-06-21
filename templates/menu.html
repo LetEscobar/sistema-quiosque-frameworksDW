@@ -23,7 +23,10 @@
             Usuários
         </a>
         {% endif %}
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+        <a
+            href="{{ url_for('campanhas.listar_campanhas') }}"
+            class="{% if request.path == url_for('campanhas.listar_campanhas') %}active{% endif %}"
+        >
             <span class="material-icons">campaign</span>
             Campanhas
         </a>

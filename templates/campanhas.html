@@ -1,0 +1,109 @@
+{% extends 'base.html' %} {% block title %}Campanhas{% endblock %} {% block
+content %}
+<div class="search-cta">
+    <input
+        type="text"
+        placeholder="Busque por Título da campanha ou Cor"
+        class="search"
+        id="buscaCampanhas"
+    />
+    <button class="btn" onclick="openModal()">Cadastrar nova campanha</button>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Cor</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="campanhaTableBody">
+        {% for campanha in campanhas %}
+        <tr>
+            <td>{{ campanha.id }}</td>
+            <td>{{ campanha.titulo }}</td>
+            <td>
+                <span
+                    style="background-color: {{ campanha.cor }}; padding: 4px 8px; border-radius: 6px; color: #fff;"
+                >
+                    {{ campanha.cor }}
+                </span>
+            </td>
+            <td>
+                {{ campanha.inicio.strftime('%d/%m/%Y %H:%M') if campanha.inicio
+                else '' }}
+            </td>
+            <td>
+                {{ campanha.fim.strftime('%d/%m/%Y %H:%M') if campanha.fim else
+                '' }}
+            </td>
+            <td>
+                <span
+                    class="status {{ 'ativo' if campanha.status == 'Ativo' else 'inativo' }}"
+                >
+                    {{ campanha.status }}
+                </span>
+            </td>
+            <td class="acoes">
+                <button
+                    class="edit"
+                    title="Editar campanha"
+                    onclick="editCampanha({{ campanha.id }})"
+                >
+                    <span class="material-icons">edit</span>
+                </button>
+
+                <label class="switch" title="Ativar/Inativar campanha">
+                    <input type="checkbox" {% if campanha.status == 'Ativo'
+                    %}checked{% endif %} onchange="toggleCampanhaStatus({{
+                    campanha.id }}, this.checked)" />
+                    <span class="slider"></span>
+                </label>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %} {% block extra_modal %}
+<div id="modalCampanha" class="modal">
+    <div class="modal-content">
+        <div class="check">
+            <h2 id="modalTitle">Cadastrar campanha</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="form">
+            <div class="item_form">
+                <label for="campanhaTitulo">Título</label>
+                <input
+                    type="text"
+                    id="campanhaTitulo"
+                    placeholder="Título da campanha"
+                    required
+                />
+                <span class="error-message" id="tituloError"></span>
+            </div>
+            <div class="item_form">
+                <label for="campanhaCor">Cor (hexadecimal)</label>
+                <input type="color" id="campanhaCor" />
+                <span class="error-message" id="corError"></span>
+            </div>
+
+            <div class="item_form">
+                <label for="campanhaInicio">Data de Início</label>
+                <input type="datetime-local" id="campanhaInicio" required />
+            </div>
+            <div class="item_form">
+                <label for="campanhaFim">Data de Fim</label>
+                <input type="datetime-local" id="campanhaFim" />
+            </div>
+
+            <button onclick="saveCampanha()" id="save">Salvar campanha</button>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='campanhas.js') }}"></script>
+{% endblock %}
