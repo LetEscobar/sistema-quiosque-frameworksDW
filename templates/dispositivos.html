@@ -1,48 +1,48 @@
 {% extends 'base.html' %} {% block title %}Dispositivos{% endblock %} {% block
 content %}
 <div class="search-cta">
-    <input
-        type="text"
-        placeholder="Busque por Nome, Endereço IP ou ID do dispositivo"
-        class="search"
-        id="buscaDispositivos"
-    />
-    <button class="btn" onclick="openModal()">Cadastrar nova tela</button>
+  <input
+    type="text"
+    placeholder="Busque por Nome, Endereço IP ou ID do dispositivo"
+    class="search"
+    id="buscaDispositivos"
+  />
+  <button class="btn" onclick="openModal()">Cadastrar nova tela</button>
 </div>
 
 <table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Endereço IP</th>
-            <th>Nome do dispositivo</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody id="telaTableBody"></tbody>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Endereço IP</th>
+      <th>Nome do dispositivo</th>
+      <th>Status</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody id="telaTableBody"></tbody>
 </table>
 {% endblock %} {% block extra_modal %}
+
 <div id="modal" class="modal">
-    <div class="modal-content">
-        <div class="check">
-            <h2>Cadastrar Tela</h2>
-            <span class="close" onclick="closeModal()">&times;</span>
-        </div>
-        <div class="form">
-            <label for="dispName">Nome</label>
-            <input
-                type="text"
-                id="dispName"
-                placeholder="Nome do dispositivo"
-            />
-            <label for="dispIP">Endereço IP</label>
-            <input type="text" id="dispIP" placeholder="192.168.1.1" />
-            <button onclick="saveDispositivo()" id="save">
-                Salvar alterações
-            </button>
-        </div>
+  <div class="modal-content">
+    <div class="check">
+      <h2>Cadastrar Tela</h2>
+      <span class="close" onclick="closeModal()">&times;</span>
     </div>
+    <div class="form">
+      <label for="dispName">Nome</label>
+      <input type="text" id="dispName" placeholder="Nome do dispositivo" />
+      <div id="dispNameError" class="input-error-message"></div>
+      <label for="dispIP">Endereço IP</label>
+      <input type="text" id="dispIP" placeholder="192.168.1.1" />
+      <div id="dispIPError" class="input-error-message"></div>
+      <button type="button" onclick="saveDispositivo()" id="save">
+        Salvar alterações
+      </button>
+    </div>
+  </div>
 </div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}

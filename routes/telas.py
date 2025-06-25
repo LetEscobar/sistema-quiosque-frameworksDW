@@ -12,6 +12,7 @@ def listar_dispositivos():
 
 @telas_bp.route('/', methods=['GET'])
 def get_telas():
+    db.session.expire_all()
     telas = Tela.query.all()
     telas_data = [{
         "id_tela": t.idTela,
