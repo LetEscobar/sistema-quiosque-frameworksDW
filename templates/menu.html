@@ -1,27 +1,32 @@
 <aside class="sidebar">
     <nav>
         <a
-            href="{{ url_for('index') }}"
-            class="{% if request.path == url_for('index') %}active{% endif %}"
+            href="{{ url_for('main.index') }}"
+            class="{% if request.path == url_for('main.index') %}active{% endif %}"
         >
             <span class="material-icons">dashboard</span>
             Gerenciar dispositivos
         </a>
         <a
-            href="{{ url_for('listar_dispositivos') }}"
-            class="{% if request.path == url_for('listar_dispositivos') %}active{% endif %}"
+            href="{{ url_for('telas.listar_dispositivos') }}"
+            class="{% if request.path == url_for('telas.listar_dispositivos') %}active{% endif %}"
         >
             <span class="material-icons">devices</span>
             Dispositivos
         </a>
+        {% if session.get('user_id') and session.get('is_admin') %}
         <a
-            href="{{ url_for('listar_usuarios') }}"
-            class="{% if request.path == url_for('listar_usuarios') %}active{% endif %}"
+            href="{{ url_for('users.listar_usuarios') }}"
+            class="{% if request.path == url_for('users.listar_usuarios') %}active{% endif %}"
         >
             <span class="material-icons">people</span>
             Usuários
         </a>
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+        {% endif %}
+        <a
+            href="{{ url_for('campanhas.listar_campanhas') }}"
+            class="{% if request.path == url_for('campanhas.listar_campanhas') %}active{% endif %}"
+        >
             <span class="material-icons">campaign</span>
             Campanhas
         </a>

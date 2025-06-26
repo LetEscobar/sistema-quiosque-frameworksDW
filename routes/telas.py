@@ -1,0 +1,92 @@
+from flask import Blueprint, jsonify, request
+from models import Tela, db
+from flask import Blueprint, render_template
+from decorators import login_required
+
+telas_bp = Blueprint('telas', __name__, url_prefix='/api/telas')
+
+@telas_bp.route('/dispositivos')
+@login_required
+def listar_dispositivos():
+    return render_template('dispositivos.html')
+
+@telas_bp.route('/', methods=['GET'])
+def get_telas():
+    db.session.expire_all()
+    telas = Tela.query.all()
+    telas_data = [{
+        "id_tela": t.idTela,
+        "nome_dispositivo": t.nomeDispositivo,
+        "endereco_ip": t.enderecoIp,
+        "status": t.status,
+    } for t in telas]
+    return jsonify(telas_data)
+
+@telas_bp.route('/<int:id_tela>', methods=['GET'])
+def get_tela(id_tela):
+    tela = Tela.query.get_or_404(id_tela)
+    return jsonify({
+        "id_tela": tela.idTela,
+        "nome_dispositivo": tela.nomeDispositivo,
+        "endereco_ip": tela.enderecoIp,
+        "status": tela.status
+    })
+
+
+@telas_bp.route('/', methods=['POST'])
+def create_telas():
+    data = request.json
+    if not data or not all(k in data for k in ('nome_dispositivo', 'endereco_ip')):
+        return jsonify({"error": "Dados incompletos"}), 400
+    
+    try:
+        nova_tela = Tela(
+            nomeDispositivo=data['nome_dispositivo'],
+            enderecoIp=data['endereco_ip'],
+            status='Ativo'
+        )
+        db.session.add(nova_tela)
+        db.session.commit()
+        return jsonify({"message": "Tela criada com sucesso!"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erro ao salvar tela: {str(e)}"}), 500
+    
+@telas_bp.route('/<int:id_tela>', methods=['PUT'])
+def update_tela(id_tela):
+    tela = Tela.query.get_or_404(id_tela)
+    data = request.json
+
+    if not data:
+        return jsonify({"error": "Nenhum dado enviado"}), 400
+
+    if 'nome_dispositivo' in data:
+        tela.nomeDispositivo = data['nome_dispositivo']
+
+    if 'endereco_ip' in data:
+        tela.enderecoIp = data['endereco_ip']
+
+    try:
+        db.session.commit()
+        return jsonify({"message": "Dispositivo atualizado com sucesso!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erro ao atualizar dispositivo: {str(e)}"}), 500
+
+
+@telas_bp.route('/<int:id_tela>/status', methods=['PATCH'])
+def toggle_tela_status(id_tela):
+    tela = Tela.query.get_or_404(id_tela)
+    data = request.json
+
+    if 'status' not in data:
+        return jsonify({"error": "Campo 'status' obrigatório"}), 400
+
+    tela.status = data['status']
+
+    try:
+        db.session.commit()
+        return jsonify({"message": f"Status da tela atualizado para {tela.status}!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Erro ao atualizar status: {str(e)}"}), 500

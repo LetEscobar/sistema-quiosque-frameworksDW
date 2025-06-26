@@ -4,7 +4,7 @@
 />
 
 <header class="topbar">
-    <a href="{{ url_for('index') }}" class="logo-topo">
+    <a href="{{ url_for('main.index') }}" class="logo-topo">
         <img
             src="{{ url_for('static', filename='images/logo-ifms-tl.png') }}"
             alt="IFMS Logo"
@@ -12,10 +12,14 @@
         />
     </a>
     <div class="profile">
-        <span>Nome do usuário</span>
-        <a href="#">
+        {% if session['user_name'] %}
+        <span>Olá, {{ session['user_name'] }}!</span>
+        <a href="{{ url_for('auth.logout') }}">
             <span class="material-icons">logout</span>
             Sair
         </a>
+        {% else %}
+        <a href="{{ url_for('login_usuario') }}">Entrar</a>
+        {% endif %}
     </div>
 </header>

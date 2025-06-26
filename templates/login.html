@@ -2,7 +2,7 @@
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8" />
-        <title>Tela de Visualização</title>
+        <title>Login</title>
         <link rel="stylesheet" href="static/login.css" />
         <link
             rel="stylesheet"
@@ -43,35 +43,33 @@
 
                 <div class="main">
                     <form method="POST" action="/login">
-                        <label for="">E-mail</label>
-                        <input
-                            type="text"
-                            name="email"
-                            id="mail"
-                            class="input"
-                            placeholder="email_usuario@ifms.edu.br"
-                        />
-
-                        <label for="">Senha</label>
-                        <div class="input-container">
+                        <div class="item_form">
+                            <label for="">E-mail</label>
                             <input
-                                type="password"
-                                name="password"
-                                id="password"
+                                type="text"
+                                name="email"
+                                id="mail"
                                 class="input"
-                                placeholder="Senha"
+                                placeholder="Digite seu e-mail"
                             />
-                            <span
-                                class="material-symbols-outlined icon"
-                                id="toggle-password"
-                                >visibility_off</span
-                            >
                         </div>
-
-                        <p>
-                            Use pelo menos 8 caracteres com 1 número e um
-                            caractere especial
-                        </p>
+                        <div class="item_form">
+                            <label for="">Senha</label>
+                            <div class="input-container">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    class="input"
+                                    placeholder="Digite sua senha"
+                                />
+                                <span
+                                    class="material-symbols-outlined icon"
+                                    id="toggle-password"
+                                    >visibility_off</span
+                                >
+                            </div>
+                        </div>
                         <input type="submit" value="ENTRAR" class="button" />
                     </form>
                     <a href="">Esqueceu sua senha?</a>
