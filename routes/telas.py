@@ -2,6 +2,10 @@ from flask import Blueprint, jsonify, request
 from models import Tela, db
 from flask import Blueprint, render_template
 from decorators import login_required
+from models import User
+from flask import session
+from utils import registrar_acao
+
 
 telas_bp = Blueprint('telas', __name__, url_prefix='/api/telas')
 
@@ -47,6 +51,9 @@ def create_telas():
         )
         db.session.add(nova_tela)
         db.session.commit()
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"<strong>{usuario.name}</strong> cadastrou o dispositivo <strong>{nova_tela.nomeDispositivo}</strong>")
+
         return jsonify({"message": "Tela criada com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
@@ -68,6 +75,9 @@ def update_tela(id_tela):
 
     try:
         db.session.commit()
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"<strong>{usuario.name}</strong> editou o dispositivo <strong>{tela.nomeDispositivo}</strong>")
+
         return jsonify({"message": "Dispositivo atualizado com sucesso!"})
     except Exception as e:
         db.session.rollback()
@@ -86,6 +96,9 @@ def toggle_tela_status(id_tela):
 
     try:
         db.session.commit()
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"<strong>{usuario.name}</strong> marcou o dispositivo <strong>{tela.nomeDispositivo}</strong> como <strong>{tela.status}</strong>")
+
         return jsonify({"message": f"Status da tela atualizado para {tela.status}!"})
     except Exception as e:
         db.session.rollback()

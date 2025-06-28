@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, request, jsonify
-from models import db, Campanha
+from flask import Blueprint, render_template, request, jsonify, session
+from models import User, db, Campanha
 from decorators import login_required, admin_required
 from datetime import datetime
+from utils import registrar_acao
+
 
 campanhas_bp = Blueprint('campanhas', __name__, url_prefix='/api/campanhas')
 
@@ -37,6 +39,10 @@ def create_campanha():
         )
         db.session.add(nova)
         db.session.commit()
+        
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"{usuario.name} cadastrou a campanha {nova.titulo}")
+        
         return jsonify({"message": "Campanha criada com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
@@ -66,6 +72,10 @@ def update_campanha(id):
         if 'fim' in data:
             campanha.fim = datetime.strptime(data['fim'], '%Y-%m-%dT%H:%M') if data['fim'] else None
         db.session.commit()
+        
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"{usuario.name} editou a campanha {campanha.titulo}")
+        
         return jsonify({"message": "Campanha atualizada com sucesso!"})
     except Exception as e:
         db.session.rollback()
@@ -80,6 +90,8 @@ def toggle_campanha_status(id):
     campanha.status = data['status']
     try:
         db.session.commit()
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"{usuario.name} marcou a campanha {campanha.titulo} como {campanha.status}")
         return jsonify({"message": f"Status atualizado para {campanha.status}"})
     except Exception as e:
         db.session.rollback()

@@ -30,7 +30,10 @@
             <span class="material-icons">campaign</span>
             Campanhas
         </a>
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+        <a
+            href="{{ url_for('historico.listar_historico') }}"
+            class="{% if request.path == url_for('historico.listar_historico') %}active{% endif %}"
+        >
             <span class="material-icons">history</span>
             Histórico
         </a>
