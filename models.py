@@ -67,3 +67,11 @@ class Campanha(db.Model):
     status = db.Column(db.String(10), nullable=False, default="Ativo")
     inicio = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     fim = db.Column(db.DateTime, nullable=True)
+
+class Historico(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    acao = db.Column(db.String(255), nullable=False)
+    data = db.Column(db.DateTime, default=datetime.utcnow)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    usuario = db.relationship('User', backref='historicos')

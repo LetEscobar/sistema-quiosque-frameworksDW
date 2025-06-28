@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block title %}Histórico{% endblock %} {% block
+content %}
+<div class="search-cta">
+    <input
+        type="text"
+        placeholder="Busque por ação ou nome do usuário"
+        class="search"
+        id="buscaHistorico"
+    />
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Usuário</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody id="historicoTableBody">
+        {% for item in historico %}
+        <tr>
+            <td>{{ item.data.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>{{ item.usuario.name if item.usuario else 'Sistema' }}</td>
+            <td>{{ item.acao|safe }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script src="{{ url_for('static', filename='historico.js') }}"></script>
+{% endblock %}

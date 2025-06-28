@@ -2,6 +2,7 @@ from flask import Flask
 from models import db
 from routes import auth_bp, users_bp, telas_bp, main_bp, campanhas_bp
 from config import Config
+from routes.historico import historico_bp
 
 def create_app():
     app = Flask(__name__)
@@ -14,6 +15,8 @@ def create_app():
     app.register_blueprint(telas_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(campanhas_bp)
+    app.register_blueprint(historico_bp)
+    
     
     with app.app_context():
         db.create_all()

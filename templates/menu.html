@@ -5,7 +5,7 @@
             class="{% if request.path == url_for('main.index') %}active{% endif %}"
         >
             <span class="material-icons">dashboard</span>
-            Gerenciar dispositivos
+            Gerenciar conteúdos
         </a>
         <a
             href="{{ url_for('telas.listar_dispositivos') }}"
@@ -30,15 +30,10 @@
             <span class="material-icons">campaign</span>
             Campanhas
         </a>
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
-            <span class="material-icons">collections</span>
-            Conteúdos
-        </a>
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
-            <span class="material-icons">schedule</span>
-            Horários
-        </a>
-        <a href="#" class="{% if request.path == '#' %}active{% endif %}">
+        <a
+            href="{{ url_for('historico.listar_historico') }}"
+            class="{% if request.path == url_for('historico.listar_historico') %}active{% endif %}"
+        >
             <span class="material-icons">history</span>
             Histórico
         </a>
