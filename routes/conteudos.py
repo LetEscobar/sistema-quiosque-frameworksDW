@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for
 from decorators import login_required
 from models import db, Conteudo, Tela, ConteudoDispositivo
@@ -19,6 +20,12 @@ def adicionar_conteudo():
     nome = request.form['nome']
     dispositivos_ids = request.form.getlist('dispositivos')
     imagem = request.files.get('imagem')
+    
+    data_inicio = request.form.get('data_inicio') or None
+    data_fim = request.form.get('data_fim') or None
+
+    data_inicio = datetime.fromisoformat(data_inicio) if data_inicio else None
+    data_fim = datetime.fromisoformat(data_fim) if data_fim else None
 
     UPLOAD_FOLDER = os.path.join('static', 'uploads')
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -31,7 +38,7 @@ def adicionar_conteudo():
     else:
         imagem_db = None
 
-    conteudo = Conteudo(nome=nome, imagem=imagem_db)
+    conteudo = Conteudo(nome=nome, imagem=imagem_db, data_inicio=data_inicio, data_fim=data_fim)
     db.session.add(conteudo)
     db.session.flush() 
 
@@ -52,6 +59,8 @@ def editar_conteudo(id):
     data = request.get_json()
     conteudo.nome = data.get('nome')
     novos_ids = set(map(int, data.get('dispositivos', [])))
+    conteudo.data_inicio = datetime.fromisoformat(data.get('data_inicio')) if data.get('data_inicio') else None
+    conteudo.data_fim = datetime.fromisoformat(data.get('data_fim')) if data.get('data_fim') else None
 
     conteudo.dispositivos.clear()
     for disp_id in novos_ids:
@@ -80,6 +89,8 @@ def get_conteudo(id):
     return jsonify({
         'id': conteudo.id,
         'nome': conteudo.nome,
-        'dispositivos': [rel.dispositivo_id for rel in conteudo.dispositivos]
+        'dispositivos': [rel.dispositivo_id for rel in conteudo.dispositivos],
+        'data_inicio': conteudo.data_inicio.isoformat() if conteudo.data_inicio else '',
+        'data_fim': conteudo.data_fim.isoformat() if conteudo.data_fim else ''
     })
 

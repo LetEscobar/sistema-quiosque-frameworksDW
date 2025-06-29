@@ -24,10 +24,12 @@ content %}
     <thead>
         <tr>
             <th>ID</th>
-            <th>Nome</th>
             <th>Imagem</th>
-            <th>Status</th>
+            <th>Nome</th>
             <th>Dispositivos</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -35,7 +37,6 @@ content %}
         {% for conteudo in conteudos %}
         <tr>
             <td>{{ conteudo.id }}</td>
-            <td>{{ conteudo.nome }}</td>
             <td>
                 {% if conteudo.imagem %}
                 <img
@@ -47,19 +48,29 @@ content %}
                 <em>Sem imagem</em>
                 {% endif %}
             </td>
-            <td>
-                <span
-                    class="status {{ 'ativo' if conteudo.status == 'Ativo' else 'inativo' }}"
-                >
-                    {{ conteudo.status }}
-                </span>
-            </td>
+            <td>{{ conteudo.nome }}</td>
 
             <td>
                 {% for rel in conteudo.dispositivos %}
                 <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span
                 ><br />
                 {% endfor %}
+            </td>
+            <td>
+                {{ conteudo.data_inicio.strftime('%d/%m/%Y %H:%M') if
+                conteudo.data_inicio else '-' }}
+            </td>
+            <td>
+                {{ conteudo.data_fim.strftime('%d/%m/%Y %H:%M') if
+                conteudo.data_fim else '-' }}
+            </td>
+
+            <td>
+                <span
+                    class="status {{ 'ativo' if conteudo.status == 'Ativo' else 'inativo' }}"
+                >
+                    {{ conteudo.status }}
+                </span>
             </td>
             <td>
                 <button
@@ -125,6 +136,20 @@ content %}
                     </div>
                 </div>
 
+                <div class="item_form">
+                    <label for="dataInicio">Data e Hora de Início</label>
+                    <input
+                        type="datetime-local"
+                        name="data_inicio"
+                        id="dataInicio"
+                    />
+                </div>
+
+                <div class="item_form">
+                    <label for="dataFim">Data e Hora de Fim</label>
+                    <input type="datetime-local" name="data_fim" id="dataFim" />
+                </div>
+
                 <button type="submit" id="save">Salvar conteúdo</button>
             </div>
         </form>
@@ -159,6 +184,16 @@ content %}
                         </label>
                         {% endfor %}
                     </div>
+                </div>
+
+                <div class="item_form">
+                    <label for="editInicio">Data e Hora de Início</label>
+                    <input type="datetime-local" id="editInicio" />
+                </div>
+
+                <div class="item_form">
+                    <label for="editFim">Data e Hora de Fim</label>
+                    <input type="datetime-local" id="editFim" />
                 </div>
 
                 <button type="submit" id="saveEdit">Salvar alterações</button>

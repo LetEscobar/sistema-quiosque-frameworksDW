@@ -91,6 +91,11 @@ function editConteudo(id) {
                 cb.checked = conteudo.dispositivos.includes(parseInt(cb.value))
             })
 
+            document.getElementById('editInicio').value =
+                conteudo.data_inicio?.slice(0, 16) || ''
+            document.getElementById('editFim').value =
+                conteudo.data_fim?.slice(0, 16) || ''
+
             openEditModal()
         })
         .catch(err => alert(err.message))
@@ -105,11 +110,13 @@ document
         const dispositivos = Array.from(
             document.querySelectorAll('.editDispositivo:checked')
         ).map(cb => cb.value)
+        const data_inicio = document.getElementById('editInicio').value
+        const data_fim = document.getElementById('editFim').value
 
         fetch(`/conteudos/editar/${id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome, dispositivos })
+            body: JSON.stringify({ nome, dispositivos, data_inicio, data_fim })
         })
             .then(res => {
                 if (!res.ok) throw new Error('Erro ao salvar alterações')
