@@ -7,6 +7,16 @@ content %}
         class="search"
         id="buscaConteudos"
     />
+
+    <select id="filtroDispositivo">
+        <option value="">Todos os Dispositivos</option>
+        {% for dispositivo in dispositivos %}
+        <option value="{{ dispositivo.nomeDispositivo }}">
+            {{ dispositivo.nomeDispositivo }}
+        </option>
+        {% endfor %}
+    </select>
+
     <button class="btn" onclick="openModal()">Cadastrar novo conteúdo</button>
 </div>
 
@@ -44,9 +54,11 @@ content %}
                     {{ conteudo.status }}
                 </span>
             </td>
+
             <td>
                 {% for rel in conteudo.dispositivos %}
-                <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span>
+                <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span
+                ><br />
                 {% endfor %}
             </td>
             <td>
@@ -83,8 +95,17 @@ content %}
         >
             <div class="form">
                 <div class="item_form">
+                    <label for="nome">Nome</label>
+                    <input type="text" name="nome" id="nome" required />
+                </div>
+                <div class="item_form">
                     <label for="imagemConteudo">Imagem</label>
-                    <input type="file" name="imagem" id="imagemConteudo" />
+                    <input
+                        type="file"
+                        name="imagem"
+                        id="imagemConteudo"
+                        required
+                    />
                 </div>
 
                 <div class="item_form">
@@ -110,4 +131,6 @@ content %}
 </div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='conteudos.js') }}"></script>
+
 {% endblock %}

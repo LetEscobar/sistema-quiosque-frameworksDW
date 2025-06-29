@@ -4,12 +4,12 @@ from models import db, Conteudo, Tela, ConteudoDispositivo
 import os, uuid
 from werkzeug.utils import secure_filename
 
-conteudos_bp = Blueprint('conteudos', __name__)
+conteudos_bp = Blueprint('conteudos', __name__, url_prefix='/conteudos')
 
 @conteudos_bp.route('/')
 @login_required
 def listar_conteudos():
-    conteudos = Conteudo.query.all()
+    conteudos = Conteudo.query.order_by(Conteudo.id.desc()).all()
     dispositivos = Tela.query.all()
     return render_template('index.html', conteudos=conteudos, dispositivos=dispositivos)
 
@@ -59,6 +59,11 @@ def editar_conteudo(id):
 @conteudos_bp.route('/alternar_status/<int:id>')
 def alternar_status_conteudo(id):
     conteudo = Conteudo.query.get(id)
+    if not conteudo:
+        return {'error': 'Conteúdo não encontrado'}, 404
+
     conteudo.status = 'Inativo' if conteudo.status == 'Ativo' else 'Ativo'
     db.session.commit()
-    return redirect(url_for('conteudos.listar_conteudos'))
+    return {'status': conteudo.status}, 200
+
+
