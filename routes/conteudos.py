@@ -5,7 +5,7 @@ from models import db, Conteudo, Tela, ConteudoDispositivo
 import os, uuid
 from werkzeug.utils import secure_filename
 
-conteudos_bp = Blueprint('conteudos', __name__, url_prefix='/conteudos')
+conteudos_bp = Blueprint('conteudos', __name__,url_prefix='/conteudos')
 
 @conteudos_bp.route('/')
 @login_required

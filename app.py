@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from models import db
 from routes import auth_bp, users_bp, telas_bp, main_bp, campanhas_bp, conteudos_bp
 from config import Config
@@ -19,7 +19,9 @@ def create_app():
     app.register_blueprint(historico_bp)
     app.register_blueprint(conteudos_bp)
 
-    
+    @app.route('/')
+    def index():
+        return redirect(url_for('auth.login_usuario'))
     
     with app.app_context():
         db.create_all()
