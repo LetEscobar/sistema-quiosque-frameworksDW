@@ -60,13 +60,19 @@ class Historico(db.Model):
     usuario = db.relationship('User', backref='historicos')
 
 
+from datetime import datetime
+
 class Conteudo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    imagem = db.Column(db.String(200)) 
+    imagem = db.Column(db.String(200))
     status = db.Column(db.String(20), default='Ativo')
+    
+    data_inicio = db.Column(db.DateTime, nullable=True)
+    data_fim = db.Column(db.DateTime, nullable=True)
 
     dispositivos = db.relationship('ConteudoDispositivo', back_populates='conteudo', cascade='all, delete-orphan')
+
 
 class ConteudoDispositivo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

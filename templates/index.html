@@ -7,6 +7,16 @@ content %}
         class="search"
         id="buscaConteudos"
     />
+
+    <select id="filtroDispositivo">
+        <option value="">Todos os Dispositivos</option>
+        {% for dispositivo in dispositivos %}
+        <option value="{{ dispositivo.nomeDispositivo }}">
+            {{ dispositivo.nomeDispositivo }}
+        </option>
+        {% endfor %}
+    </select>
+
     <button class="btn" onclick="openModal()">Cadastrar novo conteúdo</button>
 </div>
 
@@ -14,10 +24,12 @@ content %}
     <thead>
         <tr>
             <th>ID</th>
-            <th>Nome</th>
             <th>Imagem</th>
-            <th>Status</th>
+            <th>Nome</th>
             <th>Dispositivos</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -25,7 +37,6 @@ content %}
         {% for conteudo in conteudos %}
         <tr>
             <td>{{ conteudo.id }}</td>
-            <td>{{ conteudo.nome }}</td>
             <td>
                 {% if conteudo.imagem %}
                 <img
@@ -37,17 +48,29 @@ content %}
                 <em>Sem imagem</em>
                 {% endif %}
             </td>
+            <td>{{ conteudo.nome }}</td>
+
+            <td>
+                {% for rel in conteudo.dispositivos %}
+                <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span
+                ><br />
+                {% endfor %}
+            </td>
+            <td>
+                {{ conteudo.data_inicio.strftime('%d/%m/%Y %H:%M') if
+                conteudo.data_inicio else '-' }}
+            </td>
+            <td>
+                {{ conteudo.data_fim.strftime('%d/%m/%Y %H:%M') if
+                conteudo.data_fim else '-' }}
+            </td>
+
             <td>
                 <span
                     class="status {{ 'ativo' if conteudo.status == 'Ativo' else 'inativo' }}"
                 >
                     {{ conteudo.status }}
                 </span>
-            </td>
-            <td>
-                {% for rel in conteudo.dispositivos %}
-                <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span>
-                {% endfor %}
             </td>
             <td>
                 <button
@@ -83,8 +106,17 @@ content %}
         >
             <div class="form">
                 <div class="item_form">
+                    <label for="nome">Nome</label>
+                    <input type="text" name="nome" id="nome" required />
+                </div>
+                <div class="item_form">
                     <label for="imagemConteudo">Imagem</label>
-                    <input type="file" name="imagem" id="imagemConteudo" />
+                    <input
+                        type="file"
+                        name="imagem"
+                        id="imagemConteudo"
+                        required
+                    />
                 </div>
 
                 <div class="item_form">
@@ -96,11 +128,26 @@ content %}
                                 type="checkbox"
                                 name="dispositivos"
                                 value="{{ dispositivo.idTela }}"
+                                checked
                             />
                             {{ dispositivo.nomeDispositivo }}
                         </label>
                         {% endfor %}
                     </div>
+                </div>
+
+                <div class="item_form">
+                    <label for="dataInicio">Data e Hora de Início</label>
+                    <input
+                        type="datetime-local"
+                        name="data_inicio"
+                        id="dataInicio"
+                    />
+                </div>
+
+                <div class="item_form">
+                    <label for="dataFim">Data e Hora de Fim</label>
+                    <input type="datetime-local" name="data_fim" id="dataFim" />
                 </div>
 
                 <button type="submit" id="save">Salvar conteúdo</button>
@@ -109,5 +156,53 @@ content %}
     </div>
 </div>
 
+<div id="modalEditar" class="modal">
+    <div class="modal-content">
+        <div class="check">
+            <h2>Editar conteúdo</h2>
+            <span class="close" onclick="closeEditModal()">&times;</span>
+        </div>
+        <form id="formEditarConteudo">
+            <input type="hidden" id="editConteudoId" />
+            <div class="form">
+                <div class="item_form">
+                    <label for="editNome">Nome</label>
+                    <input type="text" id="editNome" required />
+                </div>
+
+                <div class="item_form">
+                    <label>Dispositivos</label>
+                    <div class="checkbox-list">
+                        {% for dispositivo in dispositivos %}
+                        <label>
+                            <input
+                                type="checkbox"
+                                class="editDispositivo"
+                                value="{{ dispositivo.idTela }}"
+                            />
+                            {{ dispositivo.nomeDispositivo }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="item_form">
+                    <label for="editInicio">Data e Hora de Início</label>
+                    <input type="datetime-local" id="editInicio" />
+                </div>
+
+                <div class="item_form">
+                    <label for="editFim">Data e Hora de Fim</label>
+                    <input type="datetime-local" id="editFim" />
+                </div>
+
+                <button type="submit" id="saveEdit">Salvar alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='conteudos.js') }}"></script>
+
 {% endblock %}
