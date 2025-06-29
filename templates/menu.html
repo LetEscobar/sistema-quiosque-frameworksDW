@@ -1,8 +1,8 @@
 <aside class="sidebar">
     <nav>
         <a
-            href="{{ url_for('main.index') }}"
-            class="{% if request.path == url_for('main.index') %}active{% endif %}"
+            href="{{ url_for('conteudos.listar_conteudos') }}"
+            class="{% if request.path == url_for('conteudos.listar_conteudos') %}active{% endif %}"
         >
             <span class="material-icons">dashboard</span>
             Gerenciar conteúdos

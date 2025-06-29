@@ -25,6 +25,6 @@ def admin_required(f):
         user = User.query.get(user_id)
         if not user or not user.is_admin:
             flash('Acesso restrito ao administrador.')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('conteudos.listar_conteudos'))
         return f(*args, **kwargs)
     return decorated_function

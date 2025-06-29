@@ -4,11 +4,6 @@ import os, glob
 
 main_bp = Blueprint('main', __name__)
 
-@main_bp.route('/')
-@login_required
-def index():
-    return render_template('index.html')
-
 @main_bp.route('/quiosque')
 def exibir_quiosque():
     img_dir = os.path.join('static', "image")

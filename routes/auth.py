@@ -37,7 +37,7 @@ def login_usuario():
         session['user_name'] = user.name
         session['is_admin'] = user.is_admin
         flash(f"Bem-vindo, {user.name}!")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('conteudos.listar_conteudos'))
 
     return render_template('login.html')
 
