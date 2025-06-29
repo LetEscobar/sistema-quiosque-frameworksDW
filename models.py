@@ -3,6 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+class Log(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    acao = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -21,15 +27,6 @@ class Tela(db.Model):
     nomeDispositivo = db.Column(db.String(20), nullable=False)
     enderecoIp = db.Column(db.String(15), nullable=False, unique=True)
     status = db.Column(db.String(10), nullable=False, default='Ativo')
-    
-class Conteudo(db.Model):
-    idConteudo = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), nullable=False)
-    tipo = db.Column(db.String(50), nullable=False)
-    caminhoArquivo = db.Column(db.String(100), nullable=False)
-    dataArquivo = db.Column(db.Date, nullable=False)
-    duracao = db.Column(db.Integer, nullable=False)
-    cor = db.Column(db.String(20), nullable=True)
 
 class Programacao(db.Model):
     idProgramacao = db.Column(db.Integer, primary_key=True)
@@ -37,28 +34,14 @@ class Programacao(db.Model):
     dataFim = db.Column(db.Date, nullable=False)
     horaInicio = db.Column(db.Time, nullable=False)
     horaFim = db.Column(db.Time, nullable=False)
-    diaSemana = db.Column(db.String(10), nullable=False) 
-    tela = db.relationship('Tela', backref='programacoes')
-    idTela = db.Column(db.Integer, db.ForeignKey('tela.idTela'), nullable=False)
-    conteudo = db.relationship('Conteudo', backref='programacoes')
-    idConteudo = db.Column(db.Integer, db.ForeignKey('conteudo.idConteudo'), nullable=False)
-
-class Horario(db.Model):
-    idHorario = db.Column(db.Integer, primary_key=True)
     diaSemana = db.Column(db.String(10), nullable=False)
-    sala = db.Column(db.String(20), nullable=False)
-    turma = db.Column(db.String(20), nullable=False)
-    hora = db.Column(db.Time, nullable=False)
-    conteudo = db.relationship('Conteudo', backref='horarios')
-    idConteudo = db.Column(db.Integer, db.ForeignKey('conteudo.idConteudo'), nullable=False)
-    programacao = db.relationship('Programacao', backref='horarios')
-    idProgramacao = db.Column(db.Integer, db.ForeignKey('programacao.idProgramacao'), nullable=False)
 
-class Log(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    acao = db.Column(db.String(100), nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    idTela = db.Column(db.Integer, db.ForeignKey('tela.idTela'), nullable=False)
+    tela = db.relationship('Tela', backref='programacoes')
+
+    idConteudo = db.Column(db.Integer, db.ForeignKey('conteudo.id'), nullable=False)
+    conteudo = db.relationship('Conteudo', backref='programacoes')
+
     
 class Campanha(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,3 +58,20 @@ class Historico(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     usuario = db.relationship('User', backref='historicos')
+
+
+class Conteudo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    imagem = db.Column(db.String(200)) 
+    status = db.Column(db.String(20), default='Ativo')
+
+    dispositivos = db.relationship('ConteudoDispositivo', back_populates='conteudo', cascade='all, delete-orphan')
+
+class ConteudoDispositivo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    conteudo_id = db.Column(db.Integer, db.ForeignKey('conteudo.id'))
+    dispositivo_id = db.Column(db.Integer, db.ForeignKey('tela.idTela'))
+
+    conteudo = db.relationship('Conteudo', back_populates='dispositivos')
+    dispositivo = db.relationship('Tela')

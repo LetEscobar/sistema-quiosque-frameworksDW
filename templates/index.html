@@ -1,5 +1,113 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
-%}
-<h1>Home</h1>
+{% extends 'base.html' %} {% block title %}Conteúdos{% endblock %} {% block
+content %}
+<div class="search-cta">
+    <input
+        type="text"
+        placeholder="Busque por Nome do conteúdo ou ID"
+        class="search"
+        id="buscaConteudos"
+    />
+    <button class="btn" onclick="openModal()">Cadastrar novo conteúdo</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Imagem</th>
+            <th>Status</th>
+            <th>Dispositivos</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="conteudosTableBody">
+        {% for conteudo in conteudos %}
+        <tr>
+            <td>{{ conteudo.id }}</td>
+            <td>{{ conteudo.nome }}</td>
+            <td>
+                {% if conteudo.imagem %}
+                <img
+                    src="{{ url_for('static', filename=conteudo.imagem) }}"
+                    alt="Imagem Conteúdo"
+                    width="60"
+                />
+                {% else %}
+                <em>Sem imagem</em>
+                {% endif %}
+            </td>
+            <td>
+                <span
+                    class="status {{ 'ativo' if conteudo.status == 'Ativo' else 'inativo' }}"
+                >
+                    {{ conteudo.status }}
+                </span>
+            </td>
+            <td>
+                {% for rel in conteudo.dispositivos %}
+                <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span>
+                {% endfor %}
+            </td>
+            <td>
+                <button
+                    class="edit"
+                    title="Editar conteúdo"
+                    onclick="editConteudo({{ conteudo.id }})"
+                >
+                    <span class="material-icons">edit</span>
+                </button>
+
+                <label class="switch" title="Ativar/Inativar conteúdo">
+                    <input type="checkbox" {% if conteudo.status == 'Ativo'
+                    %}checked{% endif %} onchange="toggleConteudoStatus({{
+                    conteudo.id }}, this.checked)" />
+                    <span class="slider"></span>
+                </label>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %} {% block extra_modal %}
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="check">
+            <h2>Cadastrar conteúdo</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <form
+            method="POST"
+            action="{{ url_for('conteudos.adicionar_conteudo') }}"
+            enctype="multipart/form-data"
+        >
+            <div class="form">
+                <div class="item_form">
+                    <label for="imagemConteudo">Imagem</label>
+                    <input type="file" name="imagem" id="imagemConteudo" />
+                </div>
+
+                <div class="item_form">
+                    <label>Dispositivos</label>
+                    <div class="checkbox-list">
+                        {% for dispositivo in dispositivos %}
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="dispositivos"
+                                value="{{ dispositivo.idTela }}"
+                            />
+                            {{ dispositivo.nomeDispositivo }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" id="save">Salvar conteúdo</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
