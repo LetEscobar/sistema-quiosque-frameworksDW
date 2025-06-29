@@ -32,7 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function toggleConteudoStatus(id, ativar) {
-    fetch(`/alternar_status/${id}`)
+    fetch(`/conteudos/alternar_status/${id}`, {
+        method: 'PATCH'
+    })
         .then(response => {
             if (!response.ok) throw new Error('Erro ao alternar status.')
             return response.json()
@@ -66,3 +68,53 @@ function toggleConteudoStatus(id, ativar) {
             if (checkbox) checkbox.checked = !ativar
         })
 }
+
+function openEditModal() {
+    document.getElementById('modalEditar').style.display = 'block'
+}
+
+function closeEditModal() {
+    document.getElementById('modalEditar').style.display = 'none'
+}
+
+function editConteudo(id) {
+    fetch(`/conteudos/api/${id}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao carregar conteúdo')
+            return res.json()
+        })
+        .then(conteudo => {
+            document.getElementById('editConteudoId').value = conteudo.id
+            document.getElementById('editNome').value = conteudo.nome
+
+            document.querySelectorAll('.editDispositivo').forEach(cb => {
+                cb.checked = conteudo.dispositivos.includes(parseInt(cb.value))
+            })
+
+            openEditModal()
+        })
+        .catch(err => alert(err.message))
+}
+
+document
+    .getElementById('formEditarConteudo')
+    .addEventListener('submit', function (e) {
+        e.preventDefault()
+        const id = document.getElementById('editConteudoId').value
+        const nome = document.getElementById('editNome').value
+        const dispositivos = Array.from(
+            document.querySelectorAll('.editDispositivo:checked')
+        ).map(cb => cb.value)
+
+        fetch(`/conteudos/editar/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, dispositivos })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao salvar alterações')
+                closeEditModal()
+                location.reload()
+            })
+            .catch(err => alert(err.message))
+    })

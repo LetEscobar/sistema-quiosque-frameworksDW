@@ -130,6 +130,42 @@ content %}
     </div>
 </div>
 
+<div id="modalEditar" class="modal">
+    <div class="modal-content">
+        <div class="check">
+            <h2>Editar conteúdo</h2>
+            <span class="close" onclick="closeEditModal()">&times;</span>
+        </div>
+        <form id="formEditarConteudo">
+            <input type="hidden" id="editConteudoId" />
+            <div class="form">
+                <div class="item_form">
+                    <label for="editNome">Nome</label>
+                    <input type="text" id="editNome" required />
+                </div>
+
+                <div class="item_form">
+                    <label>Dispositivos</label>
+                    <div class="checkbox-list">
+                        {% for dispositivo in dispositivos %}
+                        <label>
+                            <input
+                                type="checkbox"
+                                class="editDispositivo"
+                                value="{{ dispositivo.idTela }}"
+                            />
+                            {{ dispositivo.nomeDispositivo }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" id="saveEdit">Salvar alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 <script src="{{ url_for('static', filename='conteudos.js') }}"></script>
 
