@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from decorators import login_required
 from models import db, Historico
+from timezone import para_fuso_local 
 
 historico_bp = Blueprint('historico', __name__)
 
@@ -8,4 +9,12 @@ historico_bp = Blueprint('historico', __name__)
 @login_required
 def listar_historico():
     registros = Historico.query.order_by(Historico.data.desc()).all()
+
+    for r in registros:
+        r.data_local = para_fuso_local(r.data)
+        
+        print("ORIGINAL:", registros[0].data)
+        print("CONVERTIDO:", registros[0].data_local)
+
+
     return render_template('historico.html', historico=registros)

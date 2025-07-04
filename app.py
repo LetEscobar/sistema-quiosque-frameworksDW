@@ -1,9 +1,9 @@
 from flask import Flask, redirect, url_for
-from models import db
+from models import db, User
+import secrets
 from routes import auth_bp, users_bp, telas_bp, main_bp, campanhas_bp, conteudos_bp
-from config import Config
 from routes.historico import historico_bp
-
+from config import Config
 
 def create_app():
     app = Flask(__name__)
@@ -25,8 +25,6 @@ def create_app():
     
     with app.app_context():
         db.create_all()
-        from models import User
-        import secrets
         if not User.query.filter_by(email='admin@estudante.ifms.edu.br').first():
             admin_user = User(
                 name='Administrador',

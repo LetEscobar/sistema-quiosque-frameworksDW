@@ -20,7 +20,7 @@ content %}
     <tbody id="historicoTableBody">
         {% for item in historico %}
         <tr>
-            <td>{{ item.data.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>{{ item.data_local.strftime('%d/%m/%Y %H:%M') }}</td>
             <td>{{ item.usuario.name if item.usuario else 'Sistema' }}</td>
             <td>{{ item.acao|safe }}</td>
         </tr>
