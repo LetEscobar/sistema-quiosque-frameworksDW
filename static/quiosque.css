@@ -31,8 +31,15 @@ body {
 
 .carrossel_images {
     display: flex;
+    width: 100%;
     transition: transform 0.5s ease-in-out;
-    width: max-content;
+}
+
+.carrossel_images img {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
 .carrossel {
@@ -45,19 +52,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.carrossel_images {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-}
-
-.carrossel_images img {
-    width: 100%;
-    height: auto;
-    max-height: 60vh;
-    object-fit: scale-down;
-    flex-shrink: 0;
 }
 
 .conteudo_principal {

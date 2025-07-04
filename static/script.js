@@ -1,9 +1,89 @@
 let editing_user_id = null
 let dropAtivo = false
 
+let carrosselInterval = null
+let carrosselIndex = 0
+
+function atualizarRelogio() {
+    const agora = new Date()
+    const horas = agora.getHours().toString().padStart(2, '0')
+    const minutos = agora.getMinutes().toString().padStart(2, '0')
+    const segundos = agora.getSeconds().toString().padStart(2, '0')
+    const relogio = document.getElementById('relogio')
+    if (relogio) {
+        relogio.textContent = `${horas}:${minutos}:${segundos}`
+    }
+}
+setInterval(atualizarRelogio, 1000)
+atualizarRelogio()
+
+function atualizarTransform() {
+    const carrossel = document.getElementById('carrossel_images')
+    if (carrossel) {
+        carrossel.style.transition = 'transform 0.5s ease-in-out'
+        carrossel.style.transform = `translateX(-${carrosselIndex * 100}%)`
+    }
+}
+
+window.addEventListener('resize', atualizarTransform)
+
+function iniciarCarrossel() {
+    const carrossel = document.getElementById('carrossel_images')
+    if (!carrossel) return
+
+    const slides = Array.from(carrossel.querySelectorAll('img'))
+    if (slides.length <= 1) return
+
+    clearInterval(carrosselInterval)
+    carrosselIndex = 0
+    atualizarTransform()
+
+    carrosselInterval = setInterval(() => {
+        carrosselIndex = (carrosselIndex + 1) % slides.length
+        atualizarTransform()
+    }, 5000)
+}
+
+window.iniciarCarrossel = iniciarCarrossel
+
+function atualizarConteudo() {
+    fetch('/api/quiosque-data')
+        .then(res => res.json())
+        .then(data => {
+            const container = document.querySelector('.container_quiosque')
+
+            if (container) {
+                const cor = data.background || '#0f7df2'
+                container.style.background = `linear-gradient(to bottom, ${cor}, white)`
+            }
+
+            const carrossel = document.getElementById('carrossel_images')
+            if (
+                carrossel &&
+                Array.isArray(data.imagens) &&
+                data.imagens.length > 0
+            ) {
+                carrossel.innerHTML = ''
+                data.imagens.forEach(src => {
+                    const img = document.createElement('img')
+                    img.src = `/static/${src}`
+                    img.alt = 'Slide'
+                    img.style.width = '100%'
+                    img.style.flexShrink = '0'
+                    img.style.objectFit = 'contain'
+                    carrossel.appendChild(img)
+                })
+                iniciarCarrossel()
+            }
+        })
+        .catch(err => console.error('Erro ao buscar dados do quiosque:', err))
+}
+
+setInterval(atualizarConteudo, 10000)
+atualizarConteudo()
+
 function openModal() {
     document.getElementById('modal').style.display = 'block'
-
     const titulo = editing_user_id ? 'Editar usuário' : 'Cadastrar usuário'
     document.getElementById('modalTitle').textContent = titulo
 
@@ -38,79 +118,67 @@ function clearForm() {
 }
 
 function validateName() {
-    const nameInput = document.getElementById('userName')
+    const input = document.getElementById('userName')
     const error = document.getElementById('nameError')
-    const value = nameInput.value.trim()
-
+    const value = input.value.trim()
     if (!value) {
         error.textContent = 'O nome é obrigatório.'
-        nameInput.classList.add('input-error')
+        input.classList.add('input-error')
         return false
     }
-
     if (!/^[A-Za-zÀ-ú\s]+$/.test(value)) {
         error.textContent = 'O nome deve conter apenas letras.'
-        nameInput.classList.add('input-error')
+        input.classList.add('input-error')
         return false
     }
-
     error.textContent = ''
-    nameInput.classList.remove('input-error')
+    input.classList.remove('input-error')
     return true
 }
 
 function validateEmail() {
-    const emailInput = document.getElementById('userEmail')
+    const input = document.getElementById('userEmail')
     const error = document.getElementById('emailError')
-    const value = emailInput.value.trim()
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
+    const value = input.value.trim()
     if (!value) {
         error.textContent = 'O e-mail é obrigatório.'
-        emailInput.classList.add('input-error')
+        input.classList.add('input-error')
         return false
     }
-
-    if (!regex.test(value)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         error.textContent = 'Formato de e-mail inválido.'
-        emailInput.classList.add('input-error')
+        input.classList.add('input-error')
         return false
     }
-
     error.textContent = ''
-    emailInput.classList.remove('input-error')
+    input.classList.remove('input-error')
     return true
 }
 
 function validatePassword() {
-    const passwordInput = document.getElementById('userPassword')
+    const input = document.getElementById('userPassword')
     const error = document.getElementById('passwordError')
-    const value = passwordInput.value
-
+    const value = input.value
     const lengthOk = value.length >= 8
     const hasNumber = /\d/.test(value)
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
 
     if (!value) {
-        if (editing_user_id) {
-            error.textContent = ''
-            passwordInput.classList.remove('input-error')
-            return true
-        }
+        if (editing_user_id) return true
         error.textContent = 'A senha é obrigatória.'
-        passwordInput.classList.add('input-error')
+        input.classList.add('input-error')
         return false
     }
 
     if (!lengthOk || !hasNumber || !hasSpecial) {
         error.textContent =
             'A senha deve ter pelo menos 8 caracteres, 1 número e 1 caractere especial.'
-        passwordInput.classList.add('input-error')
+        input.classList.add('input-error')
         return false
     }
 
     error.textContent = ''
-    passwordInput.classList.remove('input-error')
+    input.classList.remove('input-error')
     return true
 }
 
@@ -131,16 +199,10 @@ function saveUser() {
         body: JSON.stringify({ name: nome, email, senha })
     })
         .then(res => {
-            if (!res.ok)
-                throw new Error(
-                    'Erro ao salvar usuário! Verifique se os dados foram preenchidos corretamente!  '
-                )
+            if (!res.ok) throw new Error('Erro ao salvar usuário!')
             return res.json()
         })
         .then(() => {
-            document.getElementById('userName').value = ''
-            document.getElementById('userEmail').value = ''
-            document.getElementById('userPassword').value = ''
             closeModal()
             loadUsers()
         })
@@ -153,7 +215,6 @@ function updateUser() {
     const nome = document.getElementById('userName').value.trim()
     const email = document.getElementById('userEmail').value.trim()
     const senha = document.getElementById('userPassword').value.trim()
-
     const bodyData = { name: nome, email }
     if (senha) bodyData.senha = senha
 
@@ -167,11 +228,6 @@ function updateUser() {
             return res.json()
         })
         .then(() => {
-            document.getElementById('userName').value = ''
-            document.getElementById('userEmail').value = ''
-            document.getElementById('userPassword').value = ''
-            document.getElementById('save').textContent = 'Salvar usuário'
-            document.getElementById('save').onclick = saveUser
             closeModal()
             loadUsers()
         })
@@ -180,10 +236,7 @@ function updateUser() {
 
 function editUser(id) {
     fetch(`/api/users/${id}`)
-        .then(res => {
-            if (!res.ok) throw new Error('Usuário não encontrado.')
-            return res.json()
-        })
+        .then(res => res.json())
         .then(user => {
             editing_user_id = id
             document.getElementById('userName').value = user.name
@@ -198,35 +251,14 @@ function editUser(id) {
 
 function toggleUserStatus(id, is_active) {
     const status = is_active ? 'Ativo' : 'Inativo'
-
     fetch(`/api/users/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
     })
-        .then(res => {
-            if (!res.ok) {
-                return res.json().then(data => {
-                    alert(data.error || 'Erro ao atualizar status.')
-                    const checkbox = document.querySelector(
-                        `input[type="checkbox"][onchange*="toggleUserStatus(${id}"]`
-                    )
-                    if (checkbox) checkbox.checked = !is_active
-                    throw new Error('Erro ao atualizar status')
-                })
-            }
-            return res.json()
-        })
+        .then(res => res.json())
         .then(() => loadUsers())
-        .catch(err => {
-            if (err.message !== 'Erro ao atualizar status') {
-                alert('Erro de comunicação com o servidor.')
-                const checkbox = document.querySelector(
-                    `input[type="checkbox"][onchange*="toggleUserStatus(${id}"]`
-                )
-                if (checkbox) checkbox.checked = !is_active
-            }
-        })
+        .catch(err => alert('Erro ao atualizar status: ' + err.message))
 }
 
 function loadUsers() {
@@ -234,7 +266,6 @@ function loadUsers() {
         .then(res => res.json())
         .then(users => {
             const tbody = document.getElementById('userTableBody')
-            if (!tbody) return
             tbody.innerHTML = ''
             users.forEach(user => {
                 const status_class =
@@ -265,13 +296,11 @@ function loadUsers() {
 function aplicarBusca(inputSelector, tabelaSelector) {
     const input = document.querySelector(inputSelector)
     const tabela = document.querySelector(tabelaSelector)
-
     if (!input || !tabela) return
 
     input.addEventListener('input', () => {
         const termo = input.value.trim().toLowerCase()
         const linhas = tabela.querySelectorAll('tr')
-
         linhas.forEach(linha => {
             const textoLinha = linha.textContent.toLowerCase()
             linha.style.display = textoLinha.includes(termo) ? '' : 'none'
@@ -279,47 +308,13 @@ function aplicarBusca(inputSelector, tabelaSelector) {
     })
 }
 
-function atualizarRelogio() {
-    const agora = new Date()
-    const horas = agora.getHours().toString().padStart(2, '0')
-    const minutos = agora.getMinutes().toString().padStart(2, '0')
-    const segundos = agora.getSeconds().toString().padStart(2, '0')
-    const relogio = document.getElementById('relogio')
-
-    if (relogio) {
-        relogio.textContent = `${horas}:${minutos}:${segundos}`
-    }
-}
-
-setInterval(atualizarRelogio, 1000)
-atualizarRelogio()
-
-window.addEventListener('drop', e => {
-    e.preventDefault()
-    dropAtivo = true
-    setTimeout(() => (dropAtivo = false), 100)
-})
-window.addEventListener('dragover', e => e.preventDefault())
-
-window.addEventListener('click', function (event) {
-    const modal = document.getElementById('modal')
-    if (event.target === modal && !dropAtivo) {
-        modal.style.display = 'none'
-    }
-})
-
 document.addEventListener('DOMContentLoaded', () => {
+    iniciarCarrossel()
+    atualizarRelogio()
     if (document.getElementById('userTableBody')) {
         loadUsers()
         aplicarBusca('#buscaUsuarios', '#userTableBody')
     }
-
-    document.querySelectorAll('input[required]').forEach(input => {
-        const label = input.closest('.item_form')?.querySelector('label')
-        if (label && !label.innerHTML.includes('*')) {
-            label.innerHTML += ' <span class="required-star">*</span>'
-        }
-    })
 
     const modal = document.getElementById('modal')
     if (modal) {
@@ -331,27 +326,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
     }
-
-    const carrossel = document.getElementById('carrossel_images')
-    if (!carrossel) return
-
-    const slides = Array.from(carrossel.querySelectorAll('img'))
-    let index = 0
-    let largura = carrossel.offsetWidth
-
-    function atualizarTransform() {
-        carrossel.style.transform = `translateX(-${index * 100}%)`
-    }
-
-    function avancar() {
-        index = (index + 1) % slides.length
-        atualizarTransform()
-    }
-
-    setInterval(avancar, 5000)
-
-    window.addEventListener('resize', () => {
-        largura = carrossel.offsetWidth
-        atualizarTransform()
-    })
 })

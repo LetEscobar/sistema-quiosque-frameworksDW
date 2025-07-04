@@ -3,6 +3,8 @@ from models import User, db, Campanha
 from decorators import login_required, admin_required
 from datetime import datetime
 from utils import registrar_acao
+from pytz import timezone
+fuso = timezone("America/Campo_Grande")
 
 
 campanhas_bp = Blueprint('campanhas', __name__, url_prefix='/api/campanhas')
@@ -30,12 +32,15 @@ def get_campanhas():
 def create_campanha():
     data = request.json
     try:
+        inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
+        fim = fuso.localize(datetime.fromisoformat(data['fim'])) if data.get('fim') else None
+
         nova = Campanha(
             titulo=data['titulo'],
             cor=data['cor'],
             status='Ativo',
-            inicio=datetime.strptime(data['inicio'], '%Y-%m-%dT%H:%M'),
-            fim=datetime.strptime(data['fim'], '%Y-%m-%dT%H:%M') if data.get('fim') else None
+            inicio=inicio,
+            fim=fim
         )
         db.session.add(nova)
         db.session.commit()
@@ -46,6 +51,7 @@ def create_campanha():
         return jsonify({"message": "Campanha criada com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
+        print("Erro ao criar campanha:", e)  # imprime no terminal
         return jsonify({"error": str(e)}), 500
 
 @campanhas_bp.route('/<int:id>', methods=['GET'])
@@ -68,10 +74,10 @@ def update_campanha(id):
     campanha.cor = data.get('cor', campanha.cor)
     try:
         if 'inicio' in data:
-            campanha.inicio = datetime.strptime(data['inicio'], '%Y-%m-%dT%H:%M')
+            campanha.inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
         if 'fim' in data:
-            campanha.fim = datetime.strptime(data['fim'], '%Y-%m-%dT%H:%M') if data['fim'] else None
-        db.session.commit()
+            campanha.fim = fuso.localize(datetime.fromisoformat(data['fim'])) if data['fim'] else None
+
         
         usuario = User.query.get(session.get("user_id"))
         registrar_acao(f"<strong>{usuario.name}</strong> editou a campanha <strong>{campanha.titulo}</strong>")
