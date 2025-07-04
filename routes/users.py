@@ -11,12 +11,12 @@ users_bp = Blueprint('users', __name__, url_prefix='/api/users')
 @login_required
 @admin_required
 def listar_usuarios():
-    users = User.query.all()
+    users = User.query.order_by(User.id.desc()).all()
     return render_template('usuarios.html', users=users, current_user_id=session.get('user_id'))
 
 @users_bp.route('/', methods=['GET'])
 def get_users():
-    users = User.query.all()
+    users = User.query.order_by(User.id.desc()).all()
     users_data = [{
         "id": u.id,
         "name": u.name,
