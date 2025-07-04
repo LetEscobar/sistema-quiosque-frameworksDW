@@ -11,11 +11,17 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < linhas.length; i++) {
             const colunas = linhas[i].getElementsByTagName('td')
             const id = colunas[0]?.textContent.toLowerCase() || ''
-            const nome = colunas[1]?.textContent.toLowerCase() || ''
-            const dispositivos = colunas[4]?.textContent.toLowerCase() || ''
+            const nome = colunas[2]?.textContent.toLowerCase() || ''
+            const dispositivos = colunas[3]?.textContent.toLowerCase() || ''
+            const dataInicio = colunas[4]?.textContent.toLowerCase() || ''
+            const dataFim = colunas[5]?.textContent.toLowerCase() || ''
 
             const matchTexto =
-                id.includes(filtroTexto) || nome.includes(filtroTexto)
+                id.includes(filtroTexto) ||
+                nome.includes(filtroTexto) ||
+                dataInicio.includes(filtroTexto) ||
+                dataFim.includes(filtroTexto)
+
             const matchDispositivo =
                 !filtroDispositivo || dispositivos.includes(filtroDispositivo)
 
