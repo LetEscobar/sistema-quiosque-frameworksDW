@@ -11,12 +11,12 @@ campanhas_bp = Blueprint('campanhas', __name__, url_prefix='/api/campanhas')
 @login_required
 @admin_required
 def listar_campanhas():
-    campanhas = Campanha.query.all()
+    campanhas = Campanha.query.order_by(Campanha.id.desc()).all()
     return render_template('campanhas.html', campanhas=campanhas)
 
 @campanhas_bp.route('/', methods=['GET'])
 def get_campanhas():
-    campanhas = Campanha.query.all()
+    campanhas = Campanha.query.order_by(Campanha.id.desc()).all()
     return jsonify([{
         "id": c.id,
         "titulo": c.titulo,
