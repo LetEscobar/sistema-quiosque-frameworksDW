@@ -16,21 +16,12 @@
         <div class="container_quiosque">
             <div class="carrossel">
                 <div class="carrossel_images" id="carrossel_images">
+                    {% for imagem in imagens %}
                     <img
-                        src="{{ url_for('static', filename='image/slide1.png') }}"
-                        alt="Slide 1"
-                        width="300"
+                        src="{{ url_for('static', filename=imagem) }}"
+                        alt="Slide {{ loop.index }}"
                     />
-                    <img
-                        src="{{ url_for('static', filename='image/slide2.png') }}"
-                        alt="Slide 2"
-                        width="300"
-                    />
-                    <img
-                        src="{{ url_for('static', filename='image/slide3.png') }}"
-                        alt="Slide 3"
-                        width="300"
-                    />
+                    {% endfor %}
                 </div>
             </div>
 

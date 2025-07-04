@@ -367,3 +367,14 @@ input[type='color']::-webkit-color-swatch {
 #filtroDispositivo:hover {
     border-color: #999;
 }
+
+.carrossel_images {
+    display: flex;
+    width: 100%;
+}
+
+.carrossel_images img {
+    flex: 0 0 100%;
+    max-height: 60vh;
+    object-fit: scale-down;
+}

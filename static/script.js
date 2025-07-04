@@ -332,43 +332,26 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
-    const carrossel = document.getElementById('carrossel')
-    if (carrossel) {
-        const slides = Array.from(carrossel.querySelectorAll('img'))
-        const container = carrossel.parentElement
-        const total = slides.length
+    const carrossel = document.getElementById('carrossel_images')
+    if (!carrossel) return
 
-        if (total > 0) {
-            const clone = slides[0].cloneNode(true)
-            carrossel.appendChild(clone)
+    const slides = Array.from(carrossel.querySelectorAll('img'))
+    let index = 0
+    let largura = carrossel.offsetWidth
 
-            let index = 0
-            let largura = container.offsetWidth
-
-            function atualizarTransform() {
-                carrossel.style.transform = `translateX(${-index * largura}px)`
-            }
-
-            function avancar() {
-                index++
-                carrossel.style.transition = 'transform 0.5s ease-in-out'
-                atualizarTransform()
-
-                if (index === total) {
-                    setTimeout(() => {
-                        carrossel.style.transition = 'none'
-                        index = 0
-                        atualizarTransform()
-                    }, 500)
-                }
-            }
-
-            setInterval(avancar, 5000)
-
-            window.addEventListener('resize', () => {
-                largura = container.offsetWidth
-                atualizarTransform()
-            })
-        }
+    function atualizarTransform() {
+        carrossel.style.transform = `translateX(-${index * 100}%)`
     }
+
+    function avancar() {
+        index = (index + 1) % slides.length
+        atualizarTransform()
+    }
+
+    setInterval(avancar, 5000)
+
+    window.addEventListener('resize', () => {
+        largura = carrossel.offsetWidth
+        atualizarTransform()
+    })
 })
