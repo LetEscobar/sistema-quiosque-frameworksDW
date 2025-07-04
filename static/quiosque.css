@@ -81,7 +81,10 @@ body {
 
 .barra_horario img {
     padding: 0.5rem;
-    height: 60px;
+    max-height: 60px;
+    max-width: 150px;
+    height: auto;
+    width: auto;
     object-fit: contain;
 }
 
