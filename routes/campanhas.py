@@ -41,7 +41,7 @@ def create_campanha():
         db.session.commit()
         
         usuario = User.query.get(session.get("user_id"))
-        registrar_acao(f"{usuario.name} cadastrou a campanha {nova.titulo}")
+        registrar_acao(f"<strong>{usuario.name}</strong> cadastrou a campanha <strong>{nova.titulo}</strong>")
         
         return jsonify({"message": "Campanha criada com sucesso!"}), 201
     except Exception as e:
@@ -74,7 +74,7 @@ def update_campanha(id):
         db.session.commit()
         
         usuario = User.query.get(session.get("user_id"))
-        registrar_acao(f"{usuario.name} editou a campanha {campanha.titulo}")
+        registrar_acao(f"<strong>{usuario.name}</strong> editou a campanha <strong>{campanha.titulo}</strong>")
         
         return jsonify({"message": "Campanha atualizada com sucesso!"})
     except Exception as e:
@@ -91,7 +91,7 @@ def toggle_campanha_status(id):
     try:
         db.session.commit()
         usuario = User.query.get(session.get("user_id"))
-        registrar_acao(f"{usuario.name} marcou a campanha {campanha.titulo} como {campanha.status}")
+        registrar_acao(f"<strong>{usuario.name}</strong> marcou a campanha <strong>{campanha.titulo}</strong> como {campanha.status}")
         return jsonify({"message": f"Status atualizado para {campanha.status}"})
     except Exception as e:
         db.session.rollback()

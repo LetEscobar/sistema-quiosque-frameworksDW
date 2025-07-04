@@ -1,9 +1,10 @@
 from datetime import datetime
-from flask import Blueprint, jsonify, render_template, request, redirect, url_for
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, session
 from decorators import login_required
-from models import db, Conteudo, Tela, ConteudoDispositivo
+from models import db, Conteudo, Tela, ConteudoDispositivo, User
 import os, uuid
 from werkzeug.utils import secure_filename
+from utils import registrar_acao
 
 conteudos_bp = Blueprint('conteudos', __name__,url_prefix='/conteudos')
 
@@ -45,8 +46,12 @@ def adicionar_conteudo():
     for disp_id in dispositivos_ids:
         rel = ConteudoDispositivo(conteudo_id=conteudo.id, dispositivo_id=int(disp_id))
         db.session.add(rel)
-
+    
     db.session.commit()
+    
+    usuario = User.query.get(session.get("user_id"))
+    registrar_acao(f"<strong>{usuario.name}</strong> cadastrou o conteúdo <strong>{conteudo.nome}</strong>")
+
     return redirect(url_for('conteudos.listar_conteudos'))
 
 
@@ -67,6 +72,10 @@ def editar_conteudo(id):
         db.session.add(ConteudoDispositivo(conteudo_id=id, dispositivo_id=disp_id))
 
     db.session.commit()
+    
+    usuario = User.query.get(session.get("user_id"))
+    registrar_acao(f"<strong>{usuario.name}</strong> editou o conteúdo <strong>{conteudo.nome}</strong>")
+
     return jsonify({'success': True})
 
 
@@ -78,6 +87,10 @@ def alternar_status_conteudo(id):
 
     conteudo.status = 'Inativo' if conteudo.status == 'Ativo' else 'Ativo'
     db.session.commit()
+    
+    usuario = User.query.get(session.get("user_id"))
+    registrar_acao(f"<strong>{usuario.name}</strong> marcou o conteúdo <strong>{conteudo.nome}</strong> como {conteudo.status}")
+
     return jsonify({'status': conteudo.status}), 200
 
 @conteudos_bp.route('/api/<int:id>')

@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, session, jsonify, request
 from models import User, db
 from decorators import login_required, admin_required
 from flask import current_app as app
+from utils import registrar_acao
+
 
 from utils import email_institucional_valido
 
@@ -53,6 +55,10 @@ def create_user():
         )
         db.session.add(new_user)
         db.session.commit()
+        
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"<strong>{usuario.name}</strong> cadastrou o usuário <strong>{new_user.name}</strong>")
+        
         return jsonify({"message": "Usuário criado com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
@@ -76,6 +82,8 @@ def update_user(user_id):
 
     try:
         db.session.commit()
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"<strong>{usuario.name}</strong> editou o usuário <strong>{user.name}</strong>")
         return jsonify({"message": "Usuário atualizado com sucesso!"})
     except Exception as e:
         db.session.rollback()
@@ -95,6 +103,8 @@ def toggle_user_status(user_id):
     user.status = data['status']
     try:
         db.session.commit()
+        usuario = User.query.get(session.get("user_id"))
+        registrar_acao(f"<strong>{usuario.name}</strong> marcou o usuário <strong>{user.name}</strong> como {user.status}")
         return jsonify({"message": f"Status do usuário atualizado para {user.status}!"})
     except Exception as e:
         db.session.rollback()
