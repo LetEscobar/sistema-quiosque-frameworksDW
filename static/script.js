@@ -74,7 +74,7 @@ function atualizarConteudo() {
 
             if (container) {
                 const cor = data.background || '#0f7df2'
-                container.style.background = `linear-gradient(to bottom, ${cor}, white)`
+                container.style.background = `linear-gradient(to bottom, ${cor}, black)`
             }
 
             if (
@@ -95,7 +95,7 @@ function atualizarConteudo() {
         .catch(err => console.error('Erro ao buscar dados do quiosque:', err))
 }
 
-setInterval(atualizarConteudo, 10000)
+setInterval(atualizarConteudo, 30000)
 atualizarConteudo()
 
 function openModal() {
