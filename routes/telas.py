@@ -5,6 +5,9 @@ from decorators import login_required
 from models import User
 from flask import session
 from utils import registrar_acao
+import re
+
+IP_REGEX = re.compile(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){2}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
 
 
 telas_bp = Blueprint('telas', __name__, url_prefix='/api/telas')
@@ -42,6 +45,9 @@ def create_telas():
     data = request.json
     if not data or not all(k in data for k in ('nome_dispositivo', 'endereco_ip')):
         return jsonify({"error": "Dados incompletos"}), 400
+
+    if not IP_REGEX.match(data['endereco_ip']):
+        return jsonify({"error": "Endere\u00e7o IP inv\u00e1lido"}), 400
     
     try:
         nova_tela = Tela(
@@ -64,14 +70,14 @@ def update_tela(id_tela):
     tela = Tela.query.get_or_404(id_tela)
     data = request.json
 
-    if not data:
-        return jsonify({"error": "Nenhum dado enviado"}), 400
+    if not data or not all(k in data for k in ('nome_dispositivo', 'endereco_ip')):
+        return jsonify({"error": "Dados incompletos"}), 400
 
-    if 'nome_dispositivo' in data:
-        tela.nomeDispositivo = data['nome_dispositivo']
+    if not IP_REGEX.match(data['endereco_ip']):
+        return jsonify({"error": "Endere\u00e7o IP inv\u00e1lido"}), 400
 
-    if 'endereco_ip' in data:
-        tela.enderecoIp = data['endereco_ip']
+    tela.nomeDispositivo = data['nome_dispositivo']
+    tela.enderecoIp = data['endereco_ip']
 
     try:
         db.session.commit()

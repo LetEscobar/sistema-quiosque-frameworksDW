@@ -33,15 +33,27 @@ content %}
             <span class="close" onclick="closeModal()">&times;</span>
         </div>
         <div class="form">
-            <label for="dispName">Nome</label>
-            <input
-                type="text"
-                id="dispName"
-                placeholder="Nome do dispositivo"
-            />
+            <div class="item_form">
+                <label for="dispName">Nome</label>
+                <input
+                    type="text"
+                    id="dispName"
+                    placeholder="Nome do dispositivo"
+                    required
+                />
+            </div>
             <div id="dispNameError" class="input-error-message"></div>
-            <label for="dispIP">Endereço IP</label>
-            <input type="text" id="dispIP" placeholder="192.168.1.1" />
+
+            <div class="item_form">
+                <label for="dispIP">Endereço IP</label>
+                <input
+                    type="text"
+                    id="dispIP"
+                    placeholder="Digite números e pontos. ex.: 192.168.1.1"
+                    pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+                    required
+                />
+            </div>
             <div id="dispIPError" class="input-error-message"></div>
             <button type="button" onclick="saveDispositivo()" id="save">
                 Salvar alterações
