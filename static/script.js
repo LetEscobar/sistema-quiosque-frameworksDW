@@ -31,16 +31,35 @@ function iniciarCarrossel() {
     const carrossel = document.getElementById('carrossel_images')
     if (!carrossel) return
 
-    const slides = Array.from(carrossel.querySelectorAll('img'))
-    if (slides.length <= 1) return
+    const imagens = Array.from(carrossel.querySelectorAll('img'))
+    if (imagens.length <= 1) return
+
+    const clone = carrossel.querySelector('.clone')
+    if (clone) clone.remove()
+
+    const primeiroSlide = imagens[0].cloneNode(true)
+    primeiroSlide.classList.add('clone')
+    carrossel.appendChild(primeiroSlide)
+
+    let index = 0
+    const totalSlides = imagens.length
 
     clearInterval(carrosselInterval)
     carrosselIndex = 0
     atualizarTransform()
 
     carrosselInterval = setInterval(() => {
-        carrosselIndex = (carrosselIndex + 1) % slides.length
-        atualizarTransform()
+        index++
+        carrossel.style.transition = 'transform 0.5s ease-in-out'
+        carrossel.style.transform = `translateX(-${index * 100}%)`
+
+        if (index === totalSlides) {
+            setTimeout(() => {
+                carrossel.style.transition = 'none'
+                carrossel.style.transform = `translateX(0%)`
+                index = 0
+            }, 500)
+        }
     }, 5000)
 }
 
@@ -51,13 +70,13 @@ function atualizarConteudo() {
         .then(res => res.json())
         .then(data => {
             const container = document.querySelector('.container_quiosque')
+            const carrossel = document.getElementById('carrossel_images')
 
             if (container) {
                 const cor = data.background || '#0f7df2'
                 container.style.background = `linear-gradient(to bottom, ${cor}, white)`
             }
 
-            const carrossel = document.getElementById('carrossel_images')
             if (
                 carrossel &&
                 Array.isArray(data.imagens) &&
@@ -68,9 +87,6 @@ function atualizarConteudo() {
                     const img = document.createElement('img')
                     img.src = `/static/${src}`
                     img.alt = 'Slide'
-                    img.style.width = '100%'
-                    img.style.flexShrink = '0'
-                    img.style.objectFit = 'contain'
                     carrossel.appendChild(img)
                 })
                 iniciarCarrossel()

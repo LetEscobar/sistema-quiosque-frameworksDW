@@ -11,7 +11,6 @@ campanhas_bp = Blueprint('campanhas', __name__, url_prefix='/api/campanhas')
 
 @campanhas_bp.route('/list', methods=['GET'])
 @login_required
-@admin_required
 def listar_campanhas():
     campanhas = Campanha.query.order_by(Campanha.id.desc()).all()
     return render_template('campanhas.html', campanhas=campanhas)
