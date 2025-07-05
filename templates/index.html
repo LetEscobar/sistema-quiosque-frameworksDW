@@ -20,78 +20,82 @@ content %}
     <button class="btn" onclick="openModal()">Cadastrar novo conteúdo</button>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Imagem</th>
-            <th>Nome</th>
-            <th>Dispositivos</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody id="conteudosTableBody">
-        {% for conteudo in conteudos %}
-        <tr>
-            <td>{{ conteudo.id }}</td>
-            <td>
-                {% if conteudo.imagem %}
-                <img
-                    src="{{ url_for('static', filename=conteudo.imagem) }}"
-                    alt="Imagem Conteúdo"
-                    width="60"
-                />
-                {% else %}
-                <em>Sem imagem</em>
-                {% endif %}
-            </td>
-            <td>{{ conteudo.nome }}</td>
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Dispositivos</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="conteudosTableBody">
+            {% for conteudo in conteudos %}
+            <tr>
+                <td>{{ conteudo.id }}</td>
+                <td>
+                    {% if conteudo.imagem %}
+                    <img
+                        src="{{ url_for('static', filename=conteudo.imagem) }}"
+                        alt="Imagem Conteúdo"
+                        width="60"
+                    />
+                    {% else %}
+                    <em>Sem imagem</em>
+                    {% endif %}
+                </td>
+                <td>{{ conteudo.nome }}</td>
 
-            <td>
-                {% for rel in conteudo.dispositivos %}
-                <span class="chip">{{ rel.dispositivo.nomeDispositivo }} </span
-                ><br />
-                {% endfor %}
-            </td>
-            <td>
-                {{ conteudo.data_inicio.strftime('%d/%m/%Y %H:%M') if
-                conteudo.data_inicio else '-' }}
-            </td>
-            <td>
-                {{ conteudo.data_fim.strftime('%d/%m/%Y %H:%M') if
-                conteudo.data_fim else '-' }}
-            </td>
+                <td>
+                    {% for rel in conteudo.dispositivos %}
+                    <span class="chip"
+                        >{{ rel.dispositivo.nomeDispositivo }} </span
+                    ><br />
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ conteudo.data_inicio.strftime('%d/%m/%Y %H:%M') if
+                    conteudo.data_inicio else '-' }}
+                </td>
+                <td>
+                    {{ conteudo.data_fim.strftime('%d/%m/%Y %H:%M') if
+                    conteudo.data_fim else '-' }}
+                </td>
 
-            <td>
-                <span
-                    class="status {{ 'ativo' if conteudo.status == 'Ativo' else 'inativo' }}"
-                >
-                    {{ conteudo.status }}
-                </span>
-            </td>
-            <td>
-                <button
-                    class="edit"
-                    title="Editar conteúdo"
-                    onclick="editConteudo({{ conteudo.id }})"
-                >
-                    <span class="material-icons">edit</span>
-                </button>
+                <td>
+                    <span
+                        class="status {{ 'ativo' if conteudo.status == 'Ativo' else 'inativo' }}"
+                    >
+                        {{ conteudo.status }}
+                    </span>
+                </td>
+                <td>
+                    <button
+                        class="edit"
+                        title="Editar conteúdo"
+                        onclick="editConteudo({{ conteudo.id }})"
+                    >
+                        <span class="material-icons">edit</span>
+                    </button>
 
-                <label class="switch" title="Ativar/Inativar conteúdo">
-                    <input type="checkbox" {% if conteudo.status == 'Ativo'
-                    %}checked{% endif %} onchange="toggleConteudoStatus({{
-                    conteudo.id }}, this.checked)" />
-                    <span class="slider"></span>
-                </label>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                    <label class="switch" title="Ativar/Inativar conteúdo">
+                        <input type="checkbox" {% if conteudo.status == 'Ativo'
+                        %}checked{% endif %} onchange="toggleConteudoStatus({{
+                        conteudo.id }}, this.checked)" />
+                        <span class="slider"></span>
+                    </label>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %} {% block extra_modal %}
 <div id="modal" class="modal">
     <div class="modal-content">

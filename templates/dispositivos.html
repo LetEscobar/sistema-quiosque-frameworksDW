@@ -10,18 +10,20 @@ content %}
     <button class="btn" onclick="openModal()">Cadastrar dispositivo</button>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Endereço IP</th>
-            <th>Nome do dispositivo</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody id="telaTableBody"></tbody>
-</table>
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Endereço IP</th>
+                <th>Nome do dispositivo</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="telaTableBody"></tbody>
+    </table>
+</div>
 {% endblock %} {% block extra_modal %}
 
 <div id="modalDispositivo" class="modal">

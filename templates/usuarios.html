@@ -9,51 +9,54 @@ content %}
     />
     <button class="btn" onclick="openModal()">Cadastrar usuário</button>
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody id="userTableBody">
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-                <span
-                    class="status {{ 'ativo' if user.is_active else 'inativo' }}"
-                >
-                    {{ 'Ativo' if user.is_active else 'Inativo' }}
-                </span>
-            </td>
-            <td>
-                <button
-                    class="edit"
-                    title="Editar usuário"
-                    onclick="editUser('{{ user.id }}')"
-                >
-                    <span class="material-icons">edit</span>
-                </button>
+<div class="table-wrapper">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span
+                        class="status {{ 'ativo' if user.is_active else 'inativo' }}"
+                    >
+                        {{ 'Ativo' if user.is_active else 'Inativo' }}
+                    </span>
+                </td>
+                <td>
+                    <button
+                        class="edit"
+                        title="Editar usuário"
+                        onclick="editUser('{{ user.id }}')"
+                    >
+                        <span class="material-icons">edit</span>
+                    </button>
 
-                <label class="switch" title="Ativar/Inativar usuário">
-                    <input type="checkbox" {% if user.is_active %}checked{%
-                    endif %} {% if user.id == current_user_id and user.is_admin
-                    %}disabled{% else %} onchange="toggleUserStatus({{ user.id
-                    }}, this.checked)" {% endif %} />
+                    <label class="switch" title="Ativar/Inativar usuário">
+                        <input type="checkbox" {% if user.is_active %}checked{%
+                        endif %} {% if user.id == current_user_id and
+                        user.is_admin %}disabled{% else %}
+                        onchange="toggleUserStatus({{ user.id }}, this.checked)"
+                        {% endif %} />
 
-                    <span class="slider"></span>
-                </label>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                        <span class="slider"></span>
+                    </label>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %} {% block extra_modal %}
 <div id="modal" class="modal">
     <div class="modal-content">
