@@ -4,6 +4,30 @@ document.addEventListener('DOMContentLoaded', function () {
     const tabela = document.getElementById('conteudosTableBody')
     const linhas = tabela.getElementsByTagName('tr')
 
+    document
+        .querySelectorAll(
+            '#formConteudo input[required], #formEditarConteudo input[required]'
+        )
+        .forEach(input => {
+            const label = input.closest('.item_form')?.querySelector('label')
+            if (label && !label.innerHTML.includes('*')) {
+                label.innerHTML += ' <span class="required-star">*</span>'
+            }
+        })
+
+    const formAdd = document.getElementById('formConteudo')
+    if (formAdd) {
+        formAdd.addEventListener('submit', e => {
+            const checked = formAdd.querySelectorAll(
+                'input[name="dispositivos"]:checked'
+            )
+            if (checked.length === 0) {
+                e.preventDefault()
+                alert('Selecione ao menos um dispositivo.')
+            }
+        })
+    }
+
     function aplicarFiltros() {
         const filtroTexto = inputBusca.value.toLowerCase()
         const filtroDispositivo = selectDispositivo.value.toLowerCase()
@@ -112,12 +136,17 @@ document
     .addEventListener('submit', function (e) {
         e.preventDefault()
         const id = document.getElementById('editConteudoId').value
-        const nome = document.getElementById('editNome').value
+        const nome = document.getElementById('editNome').value.trim()
         const dispositivos = Array.from(
             document.querySelectorAll('.editDispositivo:checked')
         ).map(cb => cb.value)
         const data_inicio = document.getElementById('editInicio').value
         const data_fim = document.getElementById('editFim').value
+
+        if (!nome || !data_inicio || !data_fim || dispositivos.length === 0) {
+            alert('Preencha todos os campos obrigatórios.')
+            return
+        }
 
         fetch(`/conteudos/editar/${id}`, {
             method: 'POST',

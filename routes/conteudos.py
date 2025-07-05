@@ -25,6 +25,9 @@ def adicionar_conteudo():
     data_inicio = request.form.get('data_inicio') or None
     data_fim = request.form.get('data_fim') or None
 
+    if not nome or not data_inicio or not data_fim or not dispositivos_ids:
+        return redirect(url_for('conteudos.listar_conteudos'))
+    
     data_inicio = datetime.fromisoformat(data_inicio) if data_inicio else None
     data_fim = datetime.fromisoformat(data_fim) if data_fim else None
 
@@ -63,9 +66,18 @@ def editar_conteudo(id):
 
     data = request.get_json()
     conteudo.nome = data.get('nome')
-    novos_ids = set(map(int, data.get('dispositivos', [])))
-    conteudo.data_inicio = datetime.fromisoformat(data.get('data_inicio')) if data.get('data_inicio') else None
-    conteudo.data_fim = datetime.fromisoformat(data.get('data_fim')) if data.get('data_fim') else None
+    nome = data.get('nome')
+    dispositivos = data.get('dispositivos', [])
+    data_inicio_str = data.get('data_inicio')
+    data_fim_str = data.get('data_fim')
+
+    if not nome or not data_inicio_str or not data_fim_str or not dispositivos:
+        return jsonify({'error': 'Campos obrigatórios ausentes'}), 400
+
+    conteudo.nome = nome
+    novos_ids = set(map(int, dispositivos))
+    conteudo.data_inicio = datetime.fromisoformat(data_inicio_str)
+    conteudo.data_fim = datetime.fromisoformat(data_fim_str)
 
     conteudo.dispositivos.clear()
     for disp_id in novos_ids:

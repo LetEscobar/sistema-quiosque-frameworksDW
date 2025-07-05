@@ -104,6 +104,7 @@ content %}
             <span class="close" onclick="closeModal()">&times;</span>
         </div>
         <form
+            id="formConteudo"
             method="POST"
             action="{{ url_for('conteudos.adicionar_conteudo') }}"
             enctype="multipart/form-data"
@@ -147,12 +148,18 @@ content %}
                         type="datetime-local"
                         name="data_inicio"
                         id="dataInicio"
+                        required
                     />
                 </div>
 
                 <div class="item_form">
                     <label for="dataFim">Data e Hora de Fim</label>
-                    <input type="datetime-local" name="data_fim" id="dataFim" />
+                    <input
+                        type="datetime-local"
+                        name="data_fim"
+                        id="dataFim"
+                        required
+                    />
                 </div>
 
                 <button type="submit" id="save">Salvar conteúdo</button>
@@ -194,12 +201,12 @@ content %}
 
                 <div class="item_form">
                     <label for="editInicio">Data e Hora de Início</label>
-                    <input type="datetime-local" id="editInicio" />
+                    <input type="datetime-local" id="editInicio" required />
                 </div>
 
                 <div class="item_form">
                     <label for="editFim">Data e Hora de Fim</label>
-                    <input type="datetime-local" id="editFim" />
+                    <input type="datetime-local" id="editFim" required />
                 </div>
 
                 <button type="submit" id="saveEdit">Salvar alterações</button>
