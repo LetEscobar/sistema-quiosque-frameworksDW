@@ -4,7 +4,7 @@ let dropAtivo = false
 let carrosselInterval = null
 let conteudoTimeout = null
 let carrosselIndex = 0
-const SLIDE_DURATION = 5000
+const SLIDE_DURATION = 10000
 
 function atualizarRelogio() {
     const agora = new Date()
