@@ -46,7 +46,7 @@ class Programacao(db.Model):
 class Campanha(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(100), nullable=False)
-    cor = db.Column(db.String(7), nullable=False, default="#FFFFFF")
+    cor = db.Column(db.String(7), nullable=False, default="#369931")
     status = db.Column(db.String(10), nullable=False, default="Ativo")
     inicio = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     fim = db.Column(db.DateTime, nullable=True)

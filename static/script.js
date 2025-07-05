@@ -2,7 +2,9 @@ let editing_user_id = null
 let dropAtivo = false
 
 let carrosselInterval = null
+let conteudoTimeout = null
 let carrosselIndex = 0
+const SLIDE_DURATION = 5000
 
 function atualizarRelogio() {
     const agora = new Date()
@@ -60,7 +62,7 @@ function iniciarCarrossel() {
                 index = 0
             }, 500)
         }
-    }, 5000)
+    }, SLIDE_DURATION)
 }
 
 window.iniciarCarrossel = iniciarCarrossel
@@ -74,9 +76,10 @@ function atualizarConteudo() {
 
             if (container) {
                 const cor = data.background || '#0f7df2'
-                container.style.background = `linear-gradient(to bottom, ${cor}, black)`
+                container.style.background = `linear-gradient(to bottom, ${cor}, white)`
             }
 
+            let totalSlides = 0
             if (
                 carrossel &&
                 Array.isArray(data.imagens) &&
@@ -89,14 +92,16 @@ function atualizarConteudo() {
                     img.alt = 'Slide'
                     carrossel.appendChild(img)
                 })
+                totalSlides = data.imagens.length
                 iniciarCarrossel()
             }
+
+            const intervalo = Math.max(totalSlides, 1) * SLIDE_DURATION
+            clearTimeout(conteudoTimeout)
+            conteudoTimeout = setTimeout(atualizarConteudo, intervalo)
         })
         .catch(err => console.error('Erro ao buscar dados do quiosque:', err))
 }
-
-setInterval(atualizarConteudo, 30000)
-atualizarConteudo()
 
 function openModal() {
     document.getElementById('modal').style.display = 'block'
@@ -327,6 +332,7 @@ function aplicarBusca(inputSelector, tabelaSelector) {
 document.addEventListener('DOMContentLoaded', () => {
     iniciarCarrossel()
     atualizarRelogio()
+    atualizarConteudo()
     if (document.getElementById('userTableBody')) {
         loadUsers()
         aplicarBusca('#buscaUsuarios', '#userTableBody')

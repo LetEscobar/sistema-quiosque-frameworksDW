@@ -39,7 +39,7 @@ def quiosque_data():
         or_(Campanha.fim == None, Campanha.fim >= agora)
     ).order_by(Campanha.inicio.desc()).first()
 
-    cor = campanha.cor if campanha else "#FFFFFF"
+    cor = campanha.cor if campanha else "#369931"
 
     return jsonify({"background": cor, "imagens": imagens})
 
