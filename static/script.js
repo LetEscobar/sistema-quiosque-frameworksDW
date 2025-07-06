@@ -108,6 +108,22 @@ function openModal() {
     const titulo = editing_user_id ? 'Editar usuário' : 'Cadastrar usuário'
     document.getElementById('modalTitle').textContent = titulo
 
+    const passwordInput = document.getElementById('userPassword')
+    const passwordLabel = passwordInput
+        .closest('.item_form')
+        ?.querySelector('label')
+
+    if (editing_user_id) {
+        passwordInput.removeAttribute('required')
+        const star = passwordLabel?.querySelector('.required-star')
+        if (star) star.remove()
+    } else {
+        passwordInput.setAttribute('required', '')
+        if (passwordLabel && !passwordLabel.querySelector('.required-star')) {
+            passwordLabel.innerHTML += ' <span class="required-star">*</span>'
+        }
+    }
+
     if (!editing_user_id) {
         clearForm()
         document.getElementById('save').textContent = 'Salvar usuário'
@@ -131,80 +147,71 @@ function clearForm() {
     document.getElementById('userEmail').value = ''
     document.getElementById('userPassword').value = ''
     ;['userName', 'userEmail', 'userPassword'].forEach(id => {
-        document.getElementById(id).classList.remove('input-error')
-    })
-    ;['nameError', 'emailError', 'passwordError'].forEach(id => {
-        document.getElementById(id).textContent = ''
+        const input = document.getElementById(id)
+        if (input) input.setCustomValidity('')
     })
 }
 
 function validateName() {
     const input = document.getElementById('userName')
-    const error = document.getElementById('nameError')
     const value = input.value.trim()
+    let message = ''
     if (!value) {
-        error.textContent = 'O nome é obrigatório.'
-        input.classList.add('input-error')
-        return false
+        message = 'O nome é obrigatório.'
+    } else if (!/^[A-Za-zÀ-ú\s]+$/.test(value)) {
+        message = 'O nome deve conter apenas letras.'
     }
-    if (!/^[A-Za-zÀ-ú\s]+$/.test(value)) {
-        error.textContent = 'O nome deve conter apenas letras.'
-        input.classList.add('input-error')
-        return false
-    }
-    error.textContent = ''
-    input.classList.remove('input-error')
-    return true
+    input.setCustomValidity(message)
+    return message === ''
 }
 
 function validateEmail() {
     const input = document.getElementById('userEmail')
-    const error = document.getElementById('emailError')
     const value = input.value.trim()
+    let message = ''
+
+    const emailRegex = /^[^\s@]+@(estudante\.ifms\.edu\.br|ifms\.edu\.br)$/i
+
     if (!value) {
-        error.textContent = 'O e-mail é obrigatório.'
-        input.classList.add('input-error')
-        return false
+        message = 'O e-mail é obrigatório.'
+    } else if (!emailRegex.test(value)) {
+        message =
+            'O e-mail deve ser institucional (ifms.edu.br ou estudante.ifms.edu.br).'
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        error.textContent = 'Formato de e-mail inválido.'
-        input.classList.add('input-error')
-        return false
-    }
-    error.textContent = ''
-    input.classList.remove('input-error')
-    return true
+
+    input.setCustomValidity(message)
+    return message === ''
 }
 
 function validatePassword() {
     const input = document.getElementById('userPassword')
-    const error = document.getElementById('passwordError')
     const value = input.value
+    let message = ''
+
     const lengthOk = value.length >= 8
     const hasNumber = /\d/.test(value)
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
 
     if (!value) {
-        if (editing_user_id) return true
-        error.textContent = 'A senha é obrigatória.'
-        input.classList.add('input-error')
-        return false
-    }
-
-    if (!lengthOk || !hasNumber || !hasSpecial) {
-        error.textContent =
+        if (!editing_user_id) {
+            message = 'A senha é obrigatória.'
+        }
+    } else if (!lengthOk || !hasNumber || !hasSpecial) {
+        message =
             'A senha deve ter pelo menos 8 caracteres, 1 número e 1 caractere especial.'
-        input.classList.add('input-error')
-        return false
     }
 
-    error.textContent = ''
-    input.classList.remove('input-error')
-    return true
+    input.setCustomValidity(message)
+
+    return message === '' || (editing_user_id && value === '')
 }
 
 function validateAllFields() {
-    return validateName() && validateEmail() && validatePassword()
+    validateName()
+    validateEmail()
+    validatePassword()
+    const form = document.getElementById('userForm')
+    return form ? form.reportValidity() : false
 }
 
 function saveUser() {
@@ -263,6 +270,13 @@ function editUser(id) {
             document.getElementById('userName').value = user.name
             document.getElementById('userEmail').value = user.email
             document.getElementById('userPassword').value = ''
+            const passInput = document.getElementById('userPassword')
+            const passLabel = passInput
+                .closest('.item_form')
+                ?.querySelector('label')
+            passInput.removeAttribute('required')
+            const star = passLabel?.querySelector('.required-star')
+            if (star) star.remove()
             document.getElementById('save').textContent = 'Salvar alterações'
             document.getElementById('save').onclick = updateUser
             openModal()
@@ -346,6 +360,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 const botaoSalvar = document.getElementById('save')
                 if (botaoSalvar) botaoSalvar.click()
             }
+        })
+    }
+
+    const nomeInput = document.getElementById('userName')
+    const emailInput = document.getElementById('userEmail')
+    const senhaInput = document.getElementById('userPassword')
+
+    if (nomeInput) {
+        nomeInput.addEventListener('input', () => {
+            validateName()
+            nomeInput.reportValidity()
+        })
+    }
+
+    if (emailInput) {
+        emailInput.addEventListener('input', () => {
+            validateEmail()
+            emailInput.reportValidity()
+        })
+    }
+
+    if (senhaInput) {
+        senhaInput.addEventListener('input', () => {
+            validatePassword()
+            senhaInput.reportValidity()
         })
     }
 })

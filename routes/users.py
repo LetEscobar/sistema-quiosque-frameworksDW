@@ -23,8 +23,7 @@ def get_users():
         "id": u.id,
         "name": u.name,
         "email": u.email,
-        "status": u.status,
-        "senha": u.senha  # cuidado: remover depois
+        "status": u.status
     } for u in users]
     return jsonify(users_data)
 
@@ -42,6 +41,10 @@ def get_user(user_id):
 def create_user():
     data = request.json
     email = data.get('email')
+    
+    senha = data.get('senha')
+    if not senha or not senha.strip():
+        return jsonify({"error": "Campo 'senha' obrigatório."}), 400
 
     if not email_institucional_valido(email):
         return jsonify({"error": "E-mail institucional inválido."}), 400
@@ -50,7 +53,7 @@ def create_user():
         new_user = User(
             name=data['name'],
             email=email,
-            senha=data['senha'],
+            senha=senha,
             status='Ativo'
         )
         db.session.add(new_user)

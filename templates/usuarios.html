@@ -64,9 +64,11 @@ content %}
             <h2 id="modalTitle">Cadastrar usuário</h2>
             <span class="close" onclick="closeModal()">&times;</span>
         </div>
-        <div class="form">
+        <form id="userForm" class="form" onsubmit="return false;">
             <div class="item_form">
-                <label for="name">Nome</label>
+                <label for="name"
+                    >Nome <span class="required-star">*</span></label
+                >
                 <input
                     type="text"
                     id="userName"
@@ -74,10 +76,11 @@ content %}
                     onblur="validateName()"
                     required
                 />
-                <span class="error-message" id="nameError"></span>
             </div>
             <div class="item_form">
-                <label for="email">Email</label>
+                <label for="email"
+                    >Email <span class="required-star">*</span></label
+                >
                 <input
                     type="email"
                     id="userEmail"
@@ -85,21 +88,23 @@ content %}
                     onblur="validateEmail()"
                     required
                 />
-                <span class="error-message" id="emailError"></span>
             </div>
             <div class="item_form">
                 <label for="password">Senha</label>
+
                 <input
                     type="password"
                     id="userPassword"
                     placeholder="Senha do usuário"
                     onblur="validatePassword()"
+                    required
                 />
-                <span class="error-message" id="passwordError"></span>
             </div>
 
-            <button onclick="saveUser()" id="save">Salvar alterações</button>
-        </div>
+            <button type="button" onclick="saveUser()" id="save">
+                Salvar alterações
+            </button>
+        </form>
     </div>
 </div>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
