@@ -30,9 +30,13 @@ def get_campanhas():
 @campanhas_bp.route('/', methods=['POST'])
 def create_campanha():
     data = request.json
+    required = ['titulo', 'cor', 'inicio', 'fim']
+    for campo in required:
+        if not data.get(campo):
+            return jsonify({"error": f"Campo '{campo}' obrigat\u00f3rio."}), 400
     try:
         inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
-        fim = fuso.localize(datetime.fromisoformat(data['fim'])) if data.get('fim') else None
+        fim = fuso.localize(datetime.fromisoformat(data['fim']))
 
         nova = Campanha(
             titulo=data['titulo'],
@@ -69,13 +73,16 @@ def get_campanha(id):
 def update_campanha(id):
     campanha = Campanha.query.get_or_404(id)
     data = request.json
-    campanha.titulo = data.get('titulo', campanha.titulo)
-    campanha.cor = data.get('cor', campanha.cor)
+    required = ['titulo', 'cor', 'inicio', 'fim']
+    for campo in required:
+        if not data.get(campo):
+            return jsonify({"error": f"Campo '{campo}' obrigat\u00f3rio."}), 400
+
+    campanha.titulo = data['titulo']
+    campanha.cor = data['cor']
     try:
-        if 'inicio' in data:
-            campanha.inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
-        if 'fim' in data:
-            campanha.fim = fuso.localize(datetime.fromisoformat(data['fim'])) if data['fim'] else None
+        campanha.inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
+        campanha.fim = fuso.localize(datetime.fromisoformat(data['fim']))
 
         
         usuario = User.query.get(session.get("user_id"))

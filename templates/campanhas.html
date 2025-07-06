@@ -80,28 +80,42 @@ content %}
         </div>
         <div class="form">
             <div class="item_form">
-                <label for="campanhaTitulo">Título</label>
+                <label for="campanhaTitulo">Nome</label>
                 <input
                     type="text"
                     id="campanhaTitulo"
-                    placeholder="Título da campanha"
+                    placeholder="Nome da campanha"
+                    onblur="validateTitulo()"
                     required
                 />
-                <span class="error-message" id="tituloError"></span>
             </div>
             <div class="item_form">
                 <label for="campanhaCor">Cor (hexadecimal)</label>
-                <input type="color" id="campanhaCor" />
-                <span class="error-message" id="corError"></span>
+                <input
+                    type="color"
+                    id="campanhaCor"
+                    onblur="validateCor()"
+                    required
+                />
             </div>
 
             <div class="item_form">
                 <label for="campanhaInicio">Data de Início</label>
-                <input type="datetime-local" id="campanhaInicio" required />
+                <input
+                    type="datetime-local"
+                    id="campanhaInicio"
+                    onblur="validateInicio()"
+                    required
+                />
             </div>
             <div class="item_form">
                 <label for="campanhaFim">Data de Fim</label>
-                <input type="datetime-local" id="campanhaFim" />
+                <input
+                    type="datetime-local"
+                    id="campanhaFim"
+                    onblur="validateFim()"
+                    required
+                />
             </div>
 
             <button onclick="saveCampanha()" id="save">Salvar campanha</button>
