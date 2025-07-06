@@ -4,6 +4,7 @@ from decorators import login_required, admin_required
 from datetime import datetime
 from utils import registrar_acao
 from pytz import timezone
+from sqlalchemy import and_, or_
 fuso = timezone("America/Campo_Grande")
 
 
@@ -37,6 +38,20 @@ def create_campanha():
     try:
         inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
         fim = fuso.localize(datetime.fromisoformat(data['fim']))
+        if inicio >= fim:
+             jsonify({"error": "A data de início deve ser anterior à data de fim."}), 400
+
+        conflito = Campanha.query.filter(
+            Campanha.status == 'Ativo',
+            or_(
+                and_(Campanha.inicio <= inicio, Campanha.fim >= inicio),
+                and_(Campanha.inicio <= fim, Campanha.fim >= fim),
+                and_(Campanha.inicio >= inicio, Campanha.fim <= fim)
+            )
+        ).first()
+
+        if conflito:
+            return jsonify({"error": "Já existe uma campanha ativa que cruza esse intervalo de datas."}), 400
 
         nova = Campanha(
             titulo=data['titulo'],
@@ -54,7 +69,7 @@ def create_campanha():
         return jsonify({"message": "Campanha criada com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
-        print("Erro ao criar campanha:", e)  # imprime no terminal
+        print("Erro ao criar campanha:", e)
         return jsonify({"error": str(e)}), 500
 
 @campanhas_bp.route('/<int:id>', methods=['GET'])
@@ -78,21 +93,41 @@ def update_campanha(id):
         if not data.get(campo):
             return jsonify({"error": f"Campo '{campo}' obrigat\u00f3rio."}), 400
 
-    campanha.titulo = data['titulo']
-    campanha.cor = data['cor']
     try:
-        campanha.inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
-        campanha.fim = fuso.localize(datetime.fromisoformat(data['fim']))
-
+        inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
+        fim = fuso.localize(datetime.fromisoformat(data['fim']))
         
+        if inicio >= fim:
+            return jsonify({"error": "A data de início deve ser anterior à data de fim."}), 400
+
+        conflito = Campanha.query.filter(
+            Campanha.status == 'Ativo',
+            Campanha.id != campanha.id,
+            or_(
+                and_(Campanha.inicio <= inicio, Campanha.fim >= inicio),
+                and_(Campanha.inicio <= fim, Campanha.fim >= fim),
+                and_(Campanha.inicio >= inicio, Campanha.fim <= fim)
+            )
+        ).first()
+
+        if conflito:
+            return jsonify({"error": "Já existe uma campanha ativa que cruza esse intervalo de datas."}), 400
+
+        campanha.titulo = data['titulo']
+        campanha.cor = data['cor']
+        campanha.inicio = inicio
+        campanha.fim = fim
+
+        db.session.commit()
+
         usuario = User.query.get(session.get("user_id"))
         registrar_acao(f"<strong>{usuario.name}</strong> editou a campanha <strong>{campanha.titulo}</strong>")
-        
+
         return jsonify({"message": "Campanha atualizada com sucesso!"})
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-
+    
 @campanhas_bp.route('/<int:id>/status', methods=['PATCH'])
 def toggle_campanha_status(id):
     campanha = Campanha.query.get_or_404(id)

@@ -86,22 +86,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function validateInicio() {
         const inicioInput = document.getElementById('campanhaInicio')
-        const value = inicioInput.value
+        const fimInput = document.getElementById('campanhaFim')
+        const inicio = new Date(inicioInput.value)
+        const fim = new Date(fimInput.value)
+
         let message = ''
-        if (!value) {
+        if (!inicioInput.value) {
             message = 'A data de início é obrigatória.'
+        } else if (fimInput.value && inicio >= fim) {
+            message = 'A data de início deve ser anterior à data de fim.'
         }
+
         inicioInput.setCustomValidity(message)
         return message === ''
     }
 
     function validateFim() {
+        const inicioInput = document.getElementById('campanhaInicio')
         const fimInput = document.getElementById('campanhaFim')
-        const value = fimInput.value
+        const inicio = new Date(inicioInput.value)
+        const fim = new Date(fimInput.value)
+
         let message = ''
-        if (!value) {
+        if (!fimInput.value) {
             message = 'A data de fim é obrigatória.'
+        } else if (inicioInput.value && inicio >= fim) {
+            message = 'A data de fim deve ser posterior à data de início.'
         }
+
         fimInput.setCustomValidity(message)
         return message === ''
     }
@@ -175,7 +187,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeModal()
                 loadCampanhas()
             })
-            .catch(err => alert(err.message))
+            .catch(async err => {
+                try {
+                    const res = await err.response?.json()
+                    alert(res?.error || 'Erro ao salvar campanha.')
+                } catch (e) {
+                    alert('Erro ao salvar campanha.')
+                }
+            })
     }
     window.saveCampanha = saveCampanha
 
@@ -201,7 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeModal()
                 loadCampanhas()
             })
-            .catch(err => alert(err.message))
+            .catch(async err => {
+                try {
+                    const res = await err.response?.json()
+                    alert(res?.error || 'Erro ao atualizar campanha.')
+                } catch (e) {
+                    alert('Erro ao atualizar campanha.')
+                }
+            })
     }
     window.updateCampanha = updateCampanha
 
