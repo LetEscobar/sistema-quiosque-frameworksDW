@@ -1,6 +1,35 @@
-<h2>Recuperar senha</h2>
-<form method="POST">
-    <label>E-mail institucional</label>
-    <input type="email" name="email" required />
-    <input type="submit" value="Enviar link de recuperação" />
-</form>
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/styles.css') }}"
+        />
+    </head>
+    <body style="background: rgb(97, 121, 88)">
+        <div
+            class="container"
+            style="justify-content: center; align-items: center"
+        >
+            <div class="modal-content">
+                <div class="check">
+                    <h2>Recuperar senha</h2>
+                </div>
+                <form method="POST" class="form">
+                    <div class="item_form">
+                        <label for="email"
+                            >E-mail institucional
+                            <span class="required-star">*</span></label
+                        >
+                        <input type="email" name="email" id="email" required />
+                    </div>
+                    <input
+                        type="submit"
+                        value="Enviar link de recuperação"
+                        id="save"
+                    />
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,6 +1,60 @@
-<h2>Redefinir senha</h2>
-<form method="POST">
-    <label>Nova senha</label>
-    <input type="password" name="nova_senha" required />
-    <input type="submit" value="Salvar nova senha" />
-</form>
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/styles.css') }}"
+        />
+        <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+        />
+    </head>
+    <body style="background: rgb(97, 121, 88)">
+        <div
+            class="container"
+            style="justify-content: center; align-items: center"
+        >
+            <div class="modal-content">
+                <div class="check">
+                    <h2>Redefinir senha</h2>
+                </div>
+                <form method="POST" class="form">
+                    <div class="item_form">
+                        <label for="nova_senha"
+                            >Nova senha
+                            <span class="required-star">*</span></label
+                        >
+                        <div class="input-container">
+                            <input
+                                type="password"
+                                name="nova_senha"
+                                id="nova_senha"
+                                required
+                            />
+                            <span
+                                class="material-icons icon"
+                                onclick="togglePasswordVisibility('nova_senha', this)"
+                                >visibility_off</span
+                            >
+                        </div>
+                    </div>
+                    <input type="submit" value="Salvar nova senha" id="save" />
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function togglePasswordVisibility(inputId, icon) {
+                const input = document.getElementById(inputId)
+                if (input.type === 'password') {
+                    input.type = 'text'
+                    icon.textContent = 'visibility'
+                } else {
+                    input.type = 'password'
+                    icon.textContent = 'visibility_off'
+                }
+            }
+        </script>
+    </body>
+</html>
