@@ -20,10 +20,12 @@
             <div class="carrossel">
                 <div class="carrossel_images" id="carrossel_images">
                     {% for imagem in imagens %}
-                    <img
-                        src="{{ url_for('static', filename=imagem) }}"
-                        alt="Slide {{ loop.index }}"
-                    />
+                    <div class="slide">
+                        <img
+                            src="{{ url_for('static', filename=imagem) }}"
+                            alt="Slide {{ loop.index }}"
+                        />
+                    </div>
                     {% endfor %}
                 </div>
             </div>

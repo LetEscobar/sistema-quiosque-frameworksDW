@@ -45,33 +45,34 @@ function iniciarCarrossel() {
     const carrossel = document.getElementById('carrossel_images')
     if (!carrossel) return
 
-    const imagens = Array.from(carrossel.querySelectorAll('img'))
-    if (imagens.length <= 1) return
+    const slides = Array.from(carrossel.querySelectorAll('.slide'))
+    if (slides.length <= 1) return
 
-    const clone = carrossel.querySelector('.clone')
-    if (clone) clone.remove()
-
-    const primeiroSlide = imagens[0].cloneNode(true)
+    const primeiroSlide = slides[0].cloneNode(true)
     primeiroSlide.classList.add('clone')
     carrossel.appendChild(primeiroSlide)
 
     let index = 0
-    const totalSlides = imagens.length
+    const totalSlides = slides.length + 1
 
     clearInterval(carrosselInterval)
     carrosselIndex = 0
-    atualizarTransform()
+    carrossel.style.transition = 'none'
+    carrossel.style.transform = `translateX(0%)`
 
     carrosselInterval = setInterval(() => {
         index++
+        carrosselIndex = index
+
         carrossel.style.transition = 'transform 0.5s ease-in-out'
         carrossel.style.transform = `translateX(-${index * 100}%)`
 
-        if (index === totalSlides) {
+        if (index === totalSlides - 1) {
             setTimeout(() => {
                 carrossel.style.transition = 'none'
                 carrossel.style.transform = `translateX(0%)`
                 index = 0
+                carrosselIndex = 0
             }, 500)
         }
     }, SLIDE_DURATION)
@@ -99,11 +100,17 @@ function atualizarConteudo() {
             ) {
                 carrossel.innerHTML = ''
                 data.imagens.forEach(src => {
+                    const slide = document.createElement('div')
+                    slide.classList.add('slide')
+
                     const img = document.createElement('img')
                     img.src = `/static/${src}`
                     img.alt = 'Slide'
-                    carrossel.appendChild(img)
+
+                    slide.appendChild(img)
+                    carrossel.appendChild(slide)
                 })
+
                 totalSlides = data.imagens.length
                 iniciarCarrossel()
             }
