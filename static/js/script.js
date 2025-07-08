@@ -500,6 +500,25 @@ function aplicarBusca(inputSelector, tabelaSelector) {
     })
 }
 
+function enviarPing() {
+    fetch('/conteudos/ping', {
+        method: 'POST'
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Falha no ping')
+            return res.json()
+        })
+        .then(data => {
+            console.log('✔️ Check-in feito:', data.nome)
+        })
+        .catch(err => {
+            console.warn('❌ Falha ao fazer check-in', err)
+        })
+}
+
+setInterval(enviarPing, 60 * 1000)
+enviarPing()
+
 document.addEventListener('DOMContentLoaded', () => {
     iniciarCarrossel()
     atualizarRelogio()

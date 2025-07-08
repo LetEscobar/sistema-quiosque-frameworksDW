@@ -1,6 +1,7 @@
 import re
 from models import db, Historico
 from flask import session
+from datetime import datetime, timedelta
 
 def email_institucional_valido(email):
     padrao = r"^[\w\.-]+@(estudante\.)?ifms\.edu\.br$"
@@ -13,3 +14,8 @@ def registrar_acao(acao):
     )
     db.session.add(historico)
     db.session.commit()
+    
+def is_checkin_recente(ultimo_checkin, minutos=5):
+    if not ultimo_checkin:
+        return False
+    return datetime.utcnow() - ultimo_checkin <= timedelta(minutes=minutos)

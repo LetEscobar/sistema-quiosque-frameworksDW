@@ -4,7 +4,7 @@ from decorators import login_required
 from models import db, Conteudo, Tela, ConteudoDispositivo, User
 import os, uuid
 from werkzeug.utils import secure_filename
-from utils import registrar_acao
+from utils import registrar_acao, is_checkin_recente
 
 conteudos_bp = Blueprint('conteudos', __name__,url_prefix='/conteudos')
 
@@ -12,7 +12,14 @@ conteudos_bp = Blueprint('conteudos', __name__,url_prefix='/conteudos')
 @login_required
 def listar_conteudos():
     conteudos = Conteudo.query.order_by(Conteudo.id.desc()).all()
-    dispositivos = Tela.query.filter_by(status='Ativo').all()
+    
+    dispositivos = Tela.query.order_by(Tela.nomeDispositivo).all()
+
+    for dispositivo in dispositivos:
+        ativo = dispositivo.status == 'Ativo'
+        online = is_checkin_recente(dispositivo.ultimo_checkin)
+        dispositivo.online = ativo and online
+        
     return render_template('index.html', conteudos=conteudos, dispositivos=dispositivos)
 
 @conteudos_bp.route('/adicionar', methods=['POST'])
@@ -119,3 +126,18 @@ def get_conteudo(id):
         'data_fim': conteudo.data_fim.isoformat() if conteudo.data_fim else ''
     })
 
+@conteudos_bp.route('/ping', methods=['POST'])
+def checkin_dispositivo():
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
+    if ip == '127.0.0.1':
+        ip = '181.217.88.109'  # ou o IP da tela que você quer simular
+
+    tela = Tela.query.filter_by(enderecoIp=ip).first()
+
+    if not tela:
+        return jsonify({'error': 'Dispositivo não registrado'}), 404
+
+    tela.ultimo_checkin = datetime.utcnow()
+    db.session.commit()
+
+    return jsonify({'status': 'Check-in registrado', 'nome': tela.nomeDispositivo})

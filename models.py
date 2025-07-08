@@ -27,6 +27,7 @@ class Tela(db.Model):
     nomeDispositivo = db.Column(db.String(20), nullable=False)
     enderecoIp = db.Column(db.String(15), nullable=False, unique=True)
     status = db.Column(db.String(10), nullable=False, default='Ativo')
+    ultimo_checkin = db.Column(db.DateTime)
 
 class Programacao(db.Model):
     idProgramacao = db.Column(db.Integer, primary_key=True)

@@ -131,21 +131,24 @@ content %}
                 </div>
 
                 <div class="item_form">
-                    <label
+                    <label class="dispositivo-item"
                         >Dispositivos
                         <span class="required-star">*</span></label
                     >
                     <div class="checkbox-list">
                         {% for dispositivo in dispositivos %}
-                        <label>
+                        <label class="dispositivo-item">
                             <input
                                 type="checkbox"
-                                name="dispositivos"
+                                class="editDispositivo"
                                 value="{{ dispositivo.idTela }}"
-                                checked
                             />
-                            {{ dispositivo.nomeDispositivo }}
-                            <br />
+                            {{ dispositivo.nomeDispositivo }} {% if
+                            dispositivo.online %}
+                            <span class="status ativo">● Online</span>
+                            {% else %}
+                            <span class="status inativo">● Offline</span>
+                            {% endif %}
                         </label>
                         {% endfor %}
                     </div>
@@ -192,20 +195,24 @@ content %}
                 </div>
 
                 <div class="item_form">
-                    <label
+                    <label class="dispositivo-item"
                         >Dispositivos
                         <span class="required-star">*</span></label
                     >
                     <div class="checkbox-list">
                         {% for dispositivo in dispositivos %}
-                        <label>
+                        <label class="dispositivo-item">
                             <input
                                 type="checkbox"
                                 class="editDispositivo"
                                 value="{{ dispositivo.idTela }}"
                             />
-                            {{ dispositivo.nomeDispositivo }}
-                            <br />
+                            {{ dispositivo.nomeDispositivo }} {% if
+                            dispositivo.online %}
+                            <span class="status ativo">● Online</span>
+                            {% else %}
+                            <span class="status inativo">● Offline</span>
+                            {% endif %}
                         </label>
                         {% endfor %}
                     </div>

@@ -1,11 +1,9 @@
-from flask import Blueprint, jsonify, request
-from models import Tela, db
-from flask import Blueprint, render_template
+from flask import Blueprint, jsonify, request, render_template, session
+from models import Tela, User, db
 from decorators import login_required
-from models import User
-from flask import session
 from utils import registrar_acao
 import re
+from datetime import datetime
 
 IP_REGEX = re.compile(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){2}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
 
@@ -109,3 +107,4 @@ def toggle_tela_status(id_tela):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"Erro ao atualizar status: {str(e)}"}), 500
+
