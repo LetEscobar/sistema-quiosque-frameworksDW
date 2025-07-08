@@ -16,7 +16,7 @@ def quiosque_data():
 
     # 👇 Adicione para forçar IP local em modo de teste
     if ip == '127.0.0.1':
-        ip = '181.217.88.109'  # ou o IP da tela que você quer simular
+        ip = '181.217.89.68'  # ou o IP da tela que você quer simular
     tela = Tela.query.filter_by(endereco_ip=ip, status='Ativo').first()
 
     if not tela:
@@ -52,7 +52,7 @@ def exibir_quiosque():
 
     # 👇 Adicione para forçar IP local em modo de teste
     if ip == '127.0.0.1':
-        ip = '181.217.88.180'  # ou o IP da tela que você quer simular
+        ip = '181.217.89.68'  # ou o IP da tela que você quer simular
 
     tela = Tela.query.filter_by(endereco_ip=ip, status='Ativo').first()
 

@@ -1,14 +1,25 @@
 from flask import Flask, redirect, url_for
-from models import db, User
+from extensions import db, mail
 import secrets
+from models import User
 from routes import auth_bp, users_bp, telas_bp, main_bp, campanhas_bp, conteudos_bp
 from routes.historico import historico_bp
 from config import Config
+from werkzeug.security import generate_password_hash
+
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = 'if.news.tads@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'pjfw hgov ntax zxov'
+    app.config['MAIL_DEFAULT_SENDER'] = 'if.news.tads@gmail.com'
+    
+    mail.init_app(app)
     db.init_app(app)
 
     app.register_blueprint(auth_bp)
@@ -29,7 +40,7 @@ def create_app():
             admin_user = User(
                 name='Administrador',
                 email='leticia.araujo@estudante.ifms.edu.br',
-                senha='Senha@123',
+                senha=generate_password_hash('Senha@123'),
                 status='Ativo',
                 is_admin=True
             )

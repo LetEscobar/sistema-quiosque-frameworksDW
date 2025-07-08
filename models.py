@@ -1,7 +1,5 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from extensions import db
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,6 +15,8 @@ class User(db.Model):
     senha = db.Column(db.String(100), nullable=False)
     logs = db.relationship('Log', backref=db.backref('user'))
     is_admin = db.Column(db.Boolean, default=False)
+    reset_token = db.Column(db.String(100), nullable=True)
+    reset_token_expira_em = db.Column(db.DateTime, nullable=True)
     
     @property
     def is_active(self):
@@ -79,3 +79,9 @@ class ConteudoDispositivo(db.Model):
 
     conteudo = db.relationship('Conteudo', back_populates='dispositivos')
     dispositivo = db.relationship('Tela')
+    
+class TentativaLogin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False)
+    data_hora = db.Column(db.DateTime, default=datetime.utcnow)
+    ip = db.Column(db.String(100))

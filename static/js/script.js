@@ -1,4 +1,4 @@
-let editing_user_id_global_global = null
+let editing_user_id_global = null
 let dropAtivo = false
 
 let carrosselInterval = null
@@ -124,7 +124,7 @@ function atualizarConteudo() {
 
 function openModal() {
     document.getElementById('modal').style.display = 'block'
-    const titulo = editing_user_id_global_global
+    const titulo = editing_user_id_global
         ? 'Editar usuário'
         : 'Cadastrar usuário'
     document.getElementById('modalTitle').textContent = titulo
@@ -134,7 +134,7 @@ function openModal() {
         .closest('.item_form')
         ?.querySelector('label')
 
-    if (editing_user_id_global_global) {
+    if (editing_user_id_global) {
         passwordInput.removeAttribute('required')
         const star = passwordLabel?.querySelector('.required-star')
         if (star) star.remove()
@@ -145,7 +145,7 @@ function openModal() {
         }
     }
 
-    if (!editing_user_id_global_global) {
+    if (!editing_user_id_global) {
         clearForm()
         document.getElementById('save').textContent = 'Salvar usuário'
         document.getElementById('save').onclick = saveUser
@@ -156,7 +156,7 @@ function openModal() {
 
 function closeModal() {
     document.getElementById('modal').style.display = 'none'
-    editing_user_id_global_global = null
+    editing_user_id_global = null
     clearForm()
     document.getElementById('modalTitle').textContent = 'Cadastrar usuário'
     document.getElementById('save').textContent = 'Salvar usuário'
@@ -214,7 +214,7 @@ function validatePassword() {
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
 
     if (!value) {
-        if (!editing_user_id_global_global) {
+        if (!editing_user_id_global) {
             message = 'A senha é obrigatória.'
         }
     } else if (!lengthOk || !hasNumber || !hasSpecial) {
@@ -224,7 +224,7 @@ function validatePassword() {
 
     input.setCustomValidity(message)
 
-    return message === '' || (editing_user_id_global_global && value === '')
+    return message === '' || (editing_user_id_global && value === '')
 }
 
 function validateAllFields() {

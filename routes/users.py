@@ -4,6 +4,8 @@ from models import User, db
 from decorators import login_required, admin_required
 from flask import current_app as app
 from utils import registrar_acao
+from werkzeug.security import generate_password_hash
+
 
 
 from utils import email_institucional_valido
@@ -54,9 +56,10 @@ def create_user():
         new_user = User(
             name=data['name'],
             email=email,
-            senha=senha,
+            senha=generate_password_hash(senha),
             status='Ativo'
         )
+
         db.session.add(new_user)
         db.session.commit()
         
@@ -85,7 +88,7 @@ def update_user(user_id):
         new_pass = data['senha']
         if len(new_pass) < 8 or not re.search(r"\d", new_pass) or not re.search(r"\W", new_pass):
             return jsonify({"error": "A senha precisa ter pelo menos 8 caracteres, 1 número e 1 caractere especial."}), 400
-        user.senha = new_pass
+        user.senha = generate_password_hash(new_pass)  # ✅ hash aplicado
 
     try:
         db.session.commit()
