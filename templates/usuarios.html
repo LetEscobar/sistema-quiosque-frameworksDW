@@ -92,13 +92,20 @@ content %}
             <div class="item_form">
                 <label for="password">Senha</label>
 
-                <input
-                    type="password"
-                    id="userPassword"
-                    placeholder="Senha do usuário"
-                    onblur="validatePassword()"
-                    required
-                />
+                <div class="input-container">
+                    <input
+                        type="password"
+                        id="userPassword"
+                        placeholder="Senha do usuário"
+                        onblur="validatePassword()"
+                        required
+                    />
+                    <span
+                        class="material-icons icon"
+                        onclick="togglePasswordVisibility('userPassword', this)"
+                        >visibility_off</span
+                    >
+                </div>
             </div>
 
             <button type="button" onclick="saveUser()" id="save">

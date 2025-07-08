@@ -112,7 +112,13 @@ content %}
             <div class="form">
                 <div class="item_form">
                     <label for="nome">Nome</label>
-                    <input type="text" name="nome" id="nome" required />
+                    <input
+                        type="text"
+                        name="nome"
+                        id="nome"
+                        placeholder="Nome"
+                        required
+                    />
                 </div>
                 <div class="item_form">
                     <label for="imagemConteudo">Imagem</label>
@@ -221,7 +227,6 @@ content %}
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 <script src="{{ url_for('static', filename='js/conteudos.js') }}"></script>
 
 {% endblock %}

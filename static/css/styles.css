@@ -303,6 +303,26 @@ h2 {
     padding: 8px;
 }
 
+.input-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-container input[type='password'] {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.input-container .icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+}
+
 .error-message {
     color: #e74c3c;
     font-size: 12px;

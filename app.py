@@ -28,7 +28,7 @@ def create_app():
         if not User.query.filter_by(email='admin@estudante.ifms.edu.br').first():
             admin_user = User(
                 name='Administrador',
-                email='admin@estudante.ifms.edu.br',
+                email='leticia.araujo@estudante.ifms.edu.br',
                 senha='Senha@123',
                 status='Ativo',
                 is_admin=True

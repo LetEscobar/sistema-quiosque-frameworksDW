@@ -6,6 +6,18 @@ let conteudoTimeout = null
 let carrosselIndex = 0
 const SLIDE_DURATION = 10000
 
+function togglePasswordVisibility(inputId, icon) {
+    const input = document.getElementById(inputId)
+    if (!input) return
+    if (input.type === 'password') {
+        input.type = 'text'
+        icon.textContent = 'visibility'
+    } else {
+        input.type = 'password'
+        icon.textContent = 'visibility_off'
+    }
+}
+
 function atualizarRelogio() {
     const agora = new Date()
     const horas = agora.getHours().toString().padStart(2, '0')
@@ -76,7 +88,7 @@ function atualizarConteudo() {
 
             if (container) {
                 const cor = data.background || '#0f7df2'
-                container.style.background = `linear-gradient(to bottom, ${cor}, white)`
+                container.style.background = `linear-gradient(to bottom, ${cor}, black)`
             }
 
             let totalSlides = 0
@@ -328,6 +340,151 @@ function loadUsers() {
         })
 }
 
+function openProfileModal() {
+    if (!current_user_id) return
+    fetch(`/api/users/${current_user_id}`)
+        .then(res => res.json())
+        .then(user => {
+            document.getElementById('profileName').value = user.name
+            document.getElementById('profilePassword').value = ''
+            document.getElementById('profileModal').style.display = 'block'
+            document.getElementById('profileName').focus()
+        })
+        .catch(err => alert('Erro ao carregar usuário: ' + err.message))
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none'
+}
+
+function validateProfilePassword() {
+    const input = document.getElementById('profilePassword')
+    const value = input.value
+    let message = ''
+
+    if (value) {
+        const lengthOk = value.length >= 8
+        const hasNumber = /\d/.test(value)
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
+        if (!lengthOk || !hasNumber || !hasSpecial) {
+            message =
+                'A senha deve ter pelo menos 8 caracteres, 1 número e 1 caractere especial.'
+        }
+    }
+
+    input.setCustomValidity(message)
+    return message === ''
+}
+
+function saveProfile() {
+    if (!current_user_id) return
+    const nome = document.getElementById('profileName').value.trim()
+    const senhaInput = document.getElementById('profilePassword')
+    const senha = senhaInput.value.trim()
+    if (!validateProfilePassword()) {
+        senhaInput.reportValidity()
+        return
+    }
+    const bodyData = { name: nome }
+    if (senha) bodyData.senha = senha
+
+    fetch(`/api/users/${current_user_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar usuário')
+            return res.json()
+        })
+        .then(() => {
+            closeProfileModal()
+            const span = document.querySelector('.topbar .profile span')
+            if (span) span.textContent = `Olá, ${nome}!`
+        })
+        .catch(err => alert(err.message))
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none'
+}
+
+function validateProfilePassword() {
+    const input = document.getElementById('profilePassword')
+    const value = input.value
+    let message = ''
+
+    if (value) {
+        const lengthOk = value.length >= 8
+        const hasNumber = /\d/.test(value)
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value)
+        if (!lengthOk || !hasNumber || !hasSpecial) {
+            message =
+                'A senha deve ter pelo menos 8 caracteres, 1 número e 1 caractere especial.'
+        }
+    }
+
+    input.setCustomValidity(message)
+    return message === ''
+}
+
+function saveProfile() {
+    if (!current_user_id) return
+    const nome = document.getElementById('profileName').value.trim()
+    const senhaInput = document.getElementById('profilePassword')
+    const senha = senhaInput.value.trim()
+    if (!validateProfilePassword()) {
+        senhaInput.reportValidity()
+        return
+    }
+    const bodyData = { name: nome }
+    if (senha) bodyData.senha = senha
+
+    fetch(`/api/users/${current_user_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar usuário')
+            return res.json()
+        })
+        .then(() => {
+            closeProfileModal()
+            const span = document.querySelector('.topbar .profile span')
+            if (span) span.textContent = `Olá, ${nome}!`
+        })
+        .catch(err => alert(err.message))
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none'
+}
+
+function saveProfile() {
+    if (!current_user_id) return
+    const nome = document.getElementById('profileName').value.trim()
+    const senha = document.getElementById('profilePassword').value.trim()
+    const bodyData = { name: nome }
+    if (senha) bodyData.senha = senha
+
+    fetch(`/api/users/${current_user_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+    })
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao atualizar usuário')
+            return res.json()
+        })
+        .then(() => {
+            closeProfileModal()
+            const span = document.querySelector('.topbar .profile span')
+            if (span) span.textContent = `Olá, ${nome}!`
+        })
+        .catch(err => alert(err.message))
+}
+
 function aplicarBusca(inputSelector, tabelaSelector) {
     const input = document.querySelector(inputSelector)
     const tabela = document.querySelector(tabelaSelector)
@@ -363,6 +520,24 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    const editLink = document.getElementById('editProfileLink')
+    if (editLink) {
+        editLink.addEventListener('click', e => {
+            e.preventDefault()
+            openProfileModal()
+        })
+    }
+
+    const profileModal = document.getElementById('profileModal')
+    if (profileModal) {
+        profileModal.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault()
+                saveProfile()
+            }
+        })
+    }
+
     const nomeInput = document.getElementById('userName')
     const emailInput = document.getElementById('userEmail')
     const senhaInput = document.getElementById('userPassword')
@@ -385,6 +560,14 @@ document.addEventListener('DOMContentLoaded', () => {
         senhaInput.addEventListener('input', () => {
             validatePassword()
             senhaInput.reportValidity()
+        })
+    }
+
+    const perfilSenhaInput = document.getElementById('profilePassword')
+    if (perfilSenhaInput) {
+        perfilSenhaInput.addEventListener('input', () => {
+            validateProfilePassword()
+            perfilSenhaInput.reportValidity()
         })
     }
 })

@@ -16,14 +16,12 @@ body {
     margin: 0 auto;
     padding: 2rem;
     box-sizing: border-box;
-    background: linear-gradient(to bottom, rgb(15, 125, 242), white);
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
 .fundo_branco_horario {
-    background: white;
     padding: 1rem;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -35,7 +33,7 @@ body {
     width: 100%;
     max-width: 100%;
     position: relative;
-    background: white;
+    background: rgba(255, 255, 255, 1);
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     display: flex;
@@ -67,7 +65,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    background: white;
+    background: rgba(255, 255, 255, 1);
     padding: 1rem;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);

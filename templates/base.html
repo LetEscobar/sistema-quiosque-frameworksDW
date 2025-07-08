@@ -25,6 +25,11 @@
             <main class="content">{% block content %}{% endblock %}</main>
         </div>
 
-        {% block extra_modal %}{% endblock %}
+        {% include 'perfil_modal.html' %} {% block extra_modal %}{% endblock %}
+
+        <script>
+            const current_user_id = {{ session.get('user_id') or 'null' }};
+        </script>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </body>
 </html>

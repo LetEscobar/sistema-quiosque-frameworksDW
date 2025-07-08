@@ -1,0 +1,40 @@
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <div class="check">
+            <h2>Editar usuário</h2>
+            <span class="close" onclick="closeProfileModal()">&times;</span>
+        </div>
+        <form id="profileForm" class="form" onsubmit="return false;">
+            <div class="item_form">
+                <label for="profileName"
+                    >Nome <span class="required-star">*</span></label
+                >
+                <input
+                    type="text"
+                    id="profileName"
+                    placeholder="Digite seu nome"
+                    required
+                />
+            </div>
+            <div class="item_form">
+                <label for="profilePassword">Senha</label>
+                <div class="input-container">
+                    <input
+                        type="password"
+                        id="profilePassword"
+                        placeholder="Digite sua nova senha"
+                        onblur="validateProfilePassword()"
+                    />
+                    <span
+                        class="material-icons icon"
+                        onclick="togglePasswordVisibility('profilePassword', this)"
+                        >visibility_off</span
+                    >
+                </div>
+            </div>
+            <button class="btn" type="button" onclick="saveProfile()">
+                Salvar alterações
+            </button>
+        </form>
+    </div>
+</div>

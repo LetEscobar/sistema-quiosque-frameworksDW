@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, jsonify, request
+import re
 from models import User, db
 from decorators import login_required, admin_required
 from flask import current_app as app
@@ -81,7 +82,10 @@ def update_user(user_id):
     user.email = email
 
     if 'senha' in data and data['senha'].strip():
-        user.senha = data['senha']
+        new_pass = data['senha']
+        if len(new_pass) < 8 or not re.search(r"\d", new_pass) or not re.search(r"\W", new_pass):
+            return jsonify({"error": "A senha precisa ter pelo menos 8 caracteres, 1 número e 1 caractere especial."}), 400
+        user.senha = new_pass
 
     try:
         db.session.commit()
