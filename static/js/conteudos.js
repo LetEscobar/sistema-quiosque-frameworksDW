@@ -18,9 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const formAdd = document.getElementById('formConteudo')
     if (formAdd) {
         formAdd.addEventListener('submit', e => {
-            const checked = formAdd.querySelectorAll(
-                'input[name="dispositivos"]:checked'
-            )
+            const checked = formAdd.querySelectorAll('.editDispositivo:checked')
             if (checked.length === 0) {
                 e.preventDefault()
                 alert('Selecione ao menos um dispositivo.')
@@ -36,7 +34,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const colunas = linhas[i].getElementsByTagName('td')
             const id = colunas[0]?.textContent.toLowerCase() || ''
             const nome = colunas[2]?.textContent.toLowerCase() || ''
-            const dispositivos = colunas[3]?.textContent.toLowerCase() || ''
+            const dispositivos = Array.from(
+                colunas[3].querySelectorAll('.chip')
+            ).map(span => span.textContent.trim().toLowerCase())
             const dataInicio = colunas[4]?.textContent.toLowerCase() || ''
             const dataFim = colunas[5]?.textContent.toLowerCase() || ''
 
@@ -117,9 +117,13 @@ function editConteudo(id) {
             document.getElementById('editConteudoId').value = conteudo.id
             document.getElementById('editNome').value = conteudo.nome
 
-            document.querySelectorAll('.editDispositivo').forEach(cb => {
-                cb.checked = conteudo.dispositivos.includes(parseInt(cb.value))
-            })
+            document
+                .querySelectorAll('#formEditarConteudo .editDispositivo')
+                .forEach(cb => {
+                    cb.checked = conteudo.dispositivos.includes(
+                        parseInt(cb.value)
+                    )
+                })
 
             document.getElementById('editInicio').value =
                 conteudo.data_inicio?.slice(0, 16) || ''
@@ -138,8 +142,11 @@ document
         const id = document.getElementById('editConteudoId').value
         const nome = document.getElementById('editNome').value.trim()
         const dispositivos = Array.from(
-            document.querySelectorAll('.editDispositivo:checked')
+            document.querySelectorAll(
+                '#formEditarConteudo .editDispositivo:checked'
+            )
         ).map(cb => cb.value)
+
         const data_inicio = document.getElementById('editInicio').value
         const data_fim = document.getElementById('editFim').value
 

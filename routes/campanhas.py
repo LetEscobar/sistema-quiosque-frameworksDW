@@ -39,7 +39,7 @@ def create_campanha():
         inicio = fuso.localize(datetime.fromisoformat(data['inicio']))
         fim = fuso.localize(datetime.fromisoformat(data['fim']))
         if inicio >= fim:
-             jsonify({"error": "A data de início deve ser anterior à data de fim."}), 400
+            return jsonify({"error": "A data de início deve ser anterior à data de fim."}), 400
 
         conflito = Campanha.query.filter(
             Campanha.status == 'Ativo',
@@ -69,7 +69,6 @@ def create_campanha():
         return jsonify({"message": "Campanha criada com sucesso!"}), 201
     except Exception as e:
         db.session.rollback()
-        print("Erro ao criar campanha:", e)
         return jsonify({"error": str(e)}), 500
 
 @campanhas_bp.route('/<int:id>', methods=['GET'])

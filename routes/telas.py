@@ -18,11 +18,11 @@ def listar_dispositivos():
 @telas_bp.route('/', methods=['GET'])
 def get_telas():
     db.session.expire_all()
-    telas = Tela.query.order_by(Tela.idTela.desc()).all()
+    telas = Tela.query.order_by(Tela.id_tela.desc()).all()
     telas_data = [{
-        "id_tela": t.idTela,
-        "nome_dispositivo": t.nomeDispositivo,
-        "endereco_ip": t.enderecoIp,
+        "id_tela": t.id_tela,
+        "nome_dispositivo": t.nome_dispositivo,
+        "endereco_ip": t.endereco_ip,
         "status": t.status,
     } for t in telas]
     return jsonify(telas_data)
@@ -31,9 +31,9 @@ def get_telas():
 def get_tela(id_tela):
     tela = Tela.query.get_or_404(id_tela)
     return jsonify({
-        "id_tela": tela.idTela,
-        "nome_dispositivo": tela.nomeDispositivo,
-        "endereco_ip": tela.enderecoIp,
+        "id_tela": tela.id_tela,
+        "nome_dispositivo": tela.nome_dispositivo,
+        "endereco_ip": tela.endereco_ip,
         "status": tela.status
     })
 
@@ -49,14 +49,16 @@ def create_telas():
     
     try:
         nova_tela = Tela(
-            nomeDispositivo=data['nome_dispositivo'],
-            enderecoIp=data['endereco_ip'],
+            nome_dispositivo=data['nome_dispositivo'],
+            endereco_ip=data['endereco_ip'],
             status='Ativo'
         )
         db.session.add(nova_tela)
         db.session.commit()
         usuario = User.query.get(session.get("user_id"))
-        registrar_acao(f"<strong>{usuario.name}</strong> cadastrou o dispositivo <strong>{nova_tela.nomeDispositivo}</strong>")
+        registrar_acao(
+            f"<strong>{usuario.name}</strong> cadastrou o dispositivo <strong>{nova_tela.nome_dispositivo}</strong>"
+        )
 
         return jsonify({"message": "Tela criada com sucesso!"}), 201
     except Exception as e:
@@ -74,13 +76,13 @@ def update_tela(id_tela):
     if not IP_REGEX.match(data['endereco_ip']):
         return jsonify({"error": "Endere\u00e7o IP inv\u00e1lido"}), 400
 
-    tela.nomeDispositivo = data['nome_dispositivo']
-    tela.enderecoIp = data['endereco_ip']
+    tela.nome_dispositivo = data['nome_dispositivo']
+    tela.endereco_ip = data['endereco_ip']
 
     try:
         db.session.commit()
         usuario = User.query.get(session.get("user_id"))
-        registrar_acao(f"<strong>{usuario.name}</strong> editou o dispositivo <strong>{tela.nomeDispositivo}</strong>")
+        registrar_acao(f"<strong>{usuario.name}</strong> editou o dispositivo <strong>{tela.nome_dispositivo}</strong>")
 
         return jsonify({"message": "Dispositivo atualizado com sucesso!"})
     except Exception as e:
@@ -101,7 +103,9 @@ def toggle_tela_status(id_tela):
     try:
         db.session.commit()
         usuario = User.query.get(session.get("user_id"))
-        registrar_acao(f"<strong>{usuario.name}</strong> marcou o dispositivo <strong>{tela.nomeDispositivo}</strong> como <strong>{tela.status}</strong>")
+        registrar_acao(
+            f"<strong>{usuario.name}</strong> marcou o dispositivo <strong>{tela.nome_dispositivo}</strong> como <strong>{tela.status}</strong>"
+        )
 
         return jsonify({"message": f"Status da tela atualizado para {tela.status}!"})
     except Exception as e:

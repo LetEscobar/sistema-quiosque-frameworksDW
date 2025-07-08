@@ -58,20 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
-    function validateTitulo() {
+    window.validateTitulo = function () {
         const tituloInput = document.getElementById('campanhaTitulo')
         const value = tituloInput.value.trim()
-
         let message = ''
-        if (!value) {
-            message = 'O título é obrigatório.'
-        }
-
+        if (!value) message = 'O título é obrigatório.'
         tituloInput.setCustomValidity(message)
         return message === ''
     }
 
-    function validateCor() {
+    window.validateCor = function () {
         const corInput = document.getElementById('campanhaCor')
         const value = corInput.value.trim()
 
@@ -84,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return message === ''
     }
 
-    function validateInicio() {
+    window.validateInicio = function () {
         const inicioInput = document.getElementById('campanhaInicio')
         const fimInput = document.getElementById('campanhaFim')
         const inicio = new Date(inicioInput.value)
@@ -101,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return message === ''
     }
 
-    function validateFim() {
+    window.validateFim = function () {
         const inicioInput = document.getElementById('campanhaInicio')
         const fimInput = document.getElementById('campanhaFim')
         const inicio = new Date(inicioInput.value)
@@ -286,7 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const is_checked =
                         campanha.status === 'Ativo' ? 'checked' : ''
 
-                    // Formatar datas para exibir em dd/mm/yyyy hh:mm
                     function formatDate(dt) {
                         if (!dt) return ''
                         const d = new Date(dt)

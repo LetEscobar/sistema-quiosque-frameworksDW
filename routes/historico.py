@@ -13,9 +13,5 @@ def listar_historico():
 
     for r in registros:
         r.data_local = para_fuso_local(r.data)
-        
-        print("ORIGINAL:", registros[0].data)
-        print("CONVERTIDO:", registros[0].data_local)
-
 
     return render_template('historico.html', historico=registros)

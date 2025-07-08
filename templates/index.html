@@ -11,8 +11,8 @@ content %}
     <select id="filtroDispositivo">
         <option value="">Todos os Dispositivos</option>
         {% for dispositivo in dispositivos %}
-        <option value="{{ dispositivo.nomeDispositivo }}">
-            {{ dispositivo.nomeDispositivo }}
+        <option value="{{ dispositivo.nome_dispositivo }}">
+            {{ dispositivo.nome_dispositivo }}
         </option>
         {% endfor %}
     </select>
@@ -54,7 +54,7 @@ content %}
                 <td>
                     {% for rel in conteudo.dispositivos %}
                     <span class="chip"
-                        >{{ rel.dispositivo.nomeDispositivo }} </span
+                        >{{ rel.dispositivo.nome_dispositivo }} </span
                     ><br />
                     {% endfor %}
                 </td>
@@ -141,9 +141,11 @@ content %}
                             <input
                                 type="checkbox"
                                 class="editDispositivo"
-                                value="{{ dispositivo.idTela }}"
+                                name="dispositivos"
+                                value="{{ dispositivo.id_tela }}"
+                                checked
                             />
-                            {{ dispositivo.nomeDispositivo }} {% if
+                            {{ dispositivo.nome_dispositivo }} {% if
                             dispositivo.online %}
                             <span class="status ativo">● Online</span>
                             {% else %}
@@ -205,9 +207,10 @@ content %}
                             <input
                                 type="checkbox"
                                 class="editDispositivo"
-                                value="{{ dispositivo.idTela }}"
+                                name="dispositivos"
+                                value="{{ dispositivo.id_tela }}"
                             />
-                            {{ dispositivo.nomeDispositivo }} {% if
+                            {{ dispositivo.nome_dispositivo }} {% if
                             dispositivo.online %}
                             <span class="status ativo">● Online</span>
                             {% else %}

@@ -15,7 +15,7 @@ class User(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     status = db.Column(db.String(10), nullable=False, default='Ativo')
     senha = db.Column(db.String(100), nullable=False)
-    logUser = db.relationship('Log', backref=db.backref('user'))
+    logs = db.relationship('Log', backref=db.backref('user'))
     is_admin = db.Column(db.Boolean, default=False)
     
     @property
@@ -23,24 +23,24 @@ class User(db.Model):
         return self.status == 'Ativo'
     
 class Tela(db.Model):
-    idTela = db.Column(db.Integer, primary_key=True)
-    nomeDispositivo = db.Column(db.String(20), nullable=False)
-    enderecoIp = db.Column(db.String(15), nullable=False, unique=True)
+    id_tela = db.Column('idTela', db.Integer, primary_key=True)
+    nome_dispositivo = db.Column('nomeDispositivo', db.String(20), nullable=False)
+    endereco_ip = db.Column('enderecoIp', db.String(15), nullable=False, unique=True)
     status = db.Column(db.String(10), nullable=False, default='Ativo')
     ultimo_checkin = db.Column(db.DateTime)
 
 class Programacao(db.Model):
-    idProgramacao = db.Column(db.Integer, primary_key=True)
-    dataInicio = db.Column(db.Date, nullable=False)
-    dataFim = db.Column(db.Date, nullable=False)
-    horaInicio = db.Column(db.Time, nullable=False)
-    horaFim = db.Column(db.Time, nullable=False)
-    diaSemana = db.Column(db.String(10), nullable=False)
+    id_programacao = db.Column('idProgramacao', db.Integer, primary_key=True)
+    data_inicio = db.Column('dataInicio', db.Date, nullable=False)
+    data_fim = db.Column('dataFim', db.Date, nullable=False)
+    hora_inicio = db.Column('horaInicio', db.Time, nullable=False)
+    hora_fim = db.Column('horaFim', db.Time, nullable=False)
+    dia_semana = db.Column('diaSemana', db.String(10), nullable=False)
 
-    idTela = db.Column(db.Integer, db.ForeignKey('tela.idTela'), nullable=False)
+    id_tela = db.Column('idTela', db.Integer, db.ForeignKey('tela.idTela'), nullable=False)
     tela = db.relationship('Tela', backref='programacoes')
 
-    idConteudo = db.Column(db.Integer, db.ForeignKey('conteudo.id'), nullable=False)
+    id_conteudo = db.Column('idConteudo', db.Integer, db.ForeignKey('conteudo.id'), nullable=False)
     conteudo = db.relationship('Conteudo', backref='programacoes')
 
     
@@ -59,9 +59,6 @@ class Historico(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     usuario = db.relationship('User', backref='historicos')
-
-
-from datetime import datetime
 
 class Conteudo(db.Model):
     id = db.Column(db.Integer, primary_key=True)

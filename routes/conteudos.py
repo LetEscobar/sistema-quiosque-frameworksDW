@@ -13,7 +13,7 @@ conteudos_bp = Blueprint('conteudos', __name__,url_prefix='/conteudos')
 def listar_conteudos():
     conteudos = Conteudo.query.order_by(Conteudo.id.desc()).all()
     
-    dispositivos = Tela.query.order_by(Tela.nomeDispositivo).all()
+    dispositivos = Tela.query.order_by(Tela.nome_dispositivo).all()
 
     for dispositivo in dispositivos:
         ativo = dispositivo.status == 'Ativo'
@@ -72,7 +72,6 @@ def editar_conteudo(id):
         return jsonify({'error': 'Conteúdo não encontrado'}), 404
 
     data = request.get_json()
-    conteudo.nome = data.get('nome')
     nome = data.get('nome')
     dispositivos = data.get('dispositivos', [])
     data_inicio_str = data.get('data_inicio')
@@ -82,16 +81,16 @@ def editar_conteudo(id):
         return jsonify({'error': 'Campos obrigatórios ausentes'}), 400
 
     conteudo.nome = nome
-    novos_ids = set(map(int, dispositivos))
     conteudo.data_inicio = datetime.fromisoformat(data_inicio_str)
     conteudo.data_fim = datetime.fromisoformat(data_fim_str)
 
-    conteudo.dispositivos.clear()
-    for disp_id in novos_ids:
+    ConteudoDispositivo.query.filter_by(conteudo_id=id).delete()
+
+    for disp_id in map(int, dispositivos):
         db.session.add(ConteudoDispositivo(conteudo_id=id, dispositivo_id=disp_id))
 
     db.session.commit()
-    
+
     usuario = User.query.get(session.get("user_id"))
     registrar_acao(f"<strong>{usuario.name}</strong> editou o conteúdo <strong>{conteudo.nome}</strong>")
 
@@ -132,7 +131,7 @@ def checkin_dispositivo():
     if ip == '127.0.0.1':
         ip = '181.217.88.109'  # ou o IP da tela que você quer simular
 
-    tela = Tela.query.filter_by(enderecoIp=ip).first()
+    tela = Tela.query.filter_by(endereco_ip=ip).first()
 
     if not tela:
         return jsonify({'error': 'Dispositivo não registrado'}), 404
@@ -140,4 +139,4 @@ def checkin_dispositivo():
     tela.ultimo_checkin = datetime.utcnow()
     db.session.commit()
 
-    return jsonify({'status': 'Check-in registrado', 'nome': tela.nomeDispositivo})
+    return jsonify({'status': 'Check-in registrado', 'nome': tela.nome_dispositivo})

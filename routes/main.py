@@ -17,7 +17,7 @@ def quiosque_data():
     # 👇 Adicione para forçar IP local em modo de teste
     if ip == '127.0.0.1':
         ip = '181.217.88.109'  # ou o IP da tela que você quer simular
-    tela = Tela.query.filter_by(enderecoIp=ip, status='Ativo').first()
+    tela = Tela.query.filter_by(endereco_ip=ip, status='Ativo').first()
 
     if not tela:
         return jsonify({"background": "#FFFFFF", "imagens": []})
@@ -26,7 +26,7 @@ def quiosque_data():
         .join(ConteudoDispositivo, Conteudo.id == ConteudoDispositivo.conteudo_id) \
         .filter(
             Conteudo.status == 'Ativo',
-            ConteudoDispositivo.dispositivo_id == tela.idTela,
+            ConteudoDispositivo.dispositivo_id == tela.id_tela,
             or_(Conteudo.data_inicio == None, Conteudo.data_inicio <= agora),
             or_(Conteudo.data_fim == None, Conteudo.data_fim >= agora)
         ).all()
@@ -54,7 +54,7 @@ def exibir_quiosque():
     if ip == '127.0.0.1':
         ip = '181.217.88.180'  # ou o IP da tela que você quer simular
 
-    tela = Tela.query.filter_by(enderecoIp=ip, status='Ativo').first()
+    tela = Tela.query.filter_by(endereco_ip=ip, status='Ativo').first()
 
     if not tela:
         return render_template("quiosque.html", imagens=[], background="#FFFFFF")
@@ -63,7 +63,7 @@ def exibir_quiosque():
         .join(ConteudoDispositivo, Conteudo.id == ConteudoDispositivo.conteudo_id) \
         .filter(
             Conteudo.status == 'Ativo',
-            ConteudoDispositivo.dispositivo_id == tela.idTela,
+            ConteudoDispositivo.dispositivo_id == tela.id_tela,
             or_(Conteudo.data_inicio == None, Conteudo.data_inicio <= agora),
             or_(Conteudo.data_fim == None, Conteudo.data_fim >= agora),
         ).all()
