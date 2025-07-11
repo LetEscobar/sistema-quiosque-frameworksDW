@@ -128,8 +128,6 @@ def get_conteudo(id):
 @conteudos_bp.route('/ping', methods=['POST'])
 def checkin_dispositivo():
     ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
-    if ip == '127.0.0.1':
-        ip = '181.217.89.68'  # ou o IP da tela que você quer simular
 
     tela = Tela.query.filter_by(endereco_ip=ip).first()
 

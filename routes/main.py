@@ -14,9 +14,6 @@ def quiosque_data():
     
     ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
 
-    # 👇 Adicione para forçar IP local em modo de teste
-    if ip == '127.0.0.1':
-        ip = '181.217.89.68'  # ou o IP da tela que você quer simular
     tela = Tela.query.filter_by(endereco_ip=ip, status='Ativo').first()
 
     if not tela:
@@ -49,10 +46,6 @@ def exibir_quiosque():
     agora = datetime.now(fuso_ms)
 
     ip = request.headers.get('X-Forwarded-For', request.remote_addr).split(',')[0].strip()
-
-    # 👇 Adicione para forçar IP local em modo de teste
-    if ip == '127.0.0.1':
-        ip = '181.217.89.68'  # ou o IP da tela que você quer simular
 
     tela = Tela.query.filter_by(endereco_ip=ip, status='Ativo').first()
 

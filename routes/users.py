@@ -83,12 +83,15 @@ def update_user(user_id):
 
     user.name = data.get('name', user.name)
     user.email = email
+    
+    if session.get('user_id') == user.id:
+        session['user_name'] = user.name
 
     if 'senha' in data and data['senha'].strip():
         new_pass = data['senha']
         if len(new_pass) < 8 or not re.search(r"\d", new_pass) or not re.search(r"\W", new_pass):
             return jsonify({"error": "A senha precisa ter pelo menos 8 caracteres, 1 número e 1 caractere especial."}), 400
-        user.senha = generate_password_hash(new_pass)  # ✅ hash aplicado
+        user.senha = generate_password_hash(new_pass)
 
     try:
         db.session.commit()

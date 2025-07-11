@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let message = ''
         if (!/^#[0-9A-Fa-f]{6}$/.test(value)) {
-            message = 'Cor hexadecimal inválida.'
+            message = 'Cor inválida.'
         }
 
         corInput.setCustomValidity(message)

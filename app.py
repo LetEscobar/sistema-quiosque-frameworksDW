@@ -36,10 +36,10 @@ def create_app():
     
     with app.app_context():
         db.create_all()
-        if not User.query.filter_by(email='leticia.araujo@estudante.ifms.edu.br').first():
+        if not User.query.filter_by(email='alex.araujo@ifms.edu.br').first():
             admin_user = User(
                 name='Administrador',
-                email='leticia.araujo@estudante.ifms.edu.br',
+                email='alex.araujo@ifms.edu.br',
                 senha=generate_password_hash('Senha@123'),
                 status='Ativo',
                 is_admin=True
