@@ -82,6 +82,7 @@ Acesse o sistema pelo navegador em:
 
 ### Tela de Login
 
+-   Acesse a rota `/login`
 -   Informe e-mail e senha cadastrados.
 -   Apenas usuários com status **ativo** conseguem acessar.
 
@@ -122,3 +123,5 @@ As TVs ou monitores acessam a rota `/api/quiosque-data` e:
 1. Registram o check-in (atualizando status online).
 2. Recebem os conteúdos vinculados ao IP.
 3. Exibem somente se o conteúdo estiver **ativo**, **dentro do horário** e **associado ao dispositivo**.
+
+Acesse o quiosque através da rota `/quiosque`.
