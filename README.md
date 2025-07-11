@@ -19,7 +19,7 @@ git clone https://github.com/LetEscobar/sistema-quiosque-frameworksDW.git
 
 ### ✅ 2. Criar um ambiente virtual
 
-O ambiente virtual é importante para isolar as dependências do projeto e evitar conflitos com outras instalações do Python.
+O ambiente virtual é importante para isolar as dependências do projeto e evitar conflitos com outras instalações do Python. Entre na pasta do projeto e crie o ambiente virtual.
 
 ```bash
 python -m venv venv
